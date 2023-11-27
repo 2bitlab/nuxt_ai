@@ -1,0 +1,45 @@
+import "base"
+import "user"
+
+
+model Video extends Base {
+  url String
+  title String // 标题
+  summary String // 简介
+  coverUrl String // 封面地址
+
+  publishedAt DateTime @default(now())
+
+  videoTypeId String
+  videoType VideoType @relation(fields: [videoTypeId], references: [id], onDelete: Cascade)
+
+  videoTags VideoTag[]
+
+  videoSetId String?
+  videoSet VideoSet? @relation(fields: [videoSetId], references: [id])
+}
+
+model VideoType {
+  id String @id @default(cuid())
+  label String
+
+  parentId String?
+  parent VideoType? @relation("VideoTypeRelation", fields: [parentId], references: [id])
+  children VideoType[] @relation("VideoTypeRelation")
+
+  videos Video[]
+}
+
+model VideoTag {
+  id String @id @default(cuid())
+  label String @unique
+
+  videos Video[]
+}
+
+model VideoSet {
+  id String @id @default(cuid())
+  label String
+
+  videos Video[]
+}
