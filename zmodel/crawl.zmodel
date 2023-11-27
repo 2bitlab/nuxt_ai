@@ -1,0 +1,59 @@
+import "base"
+
+enum PageStatus {
+  IS_404 // 不存在了
+  IS_500 // 报错
+  IS_200 // 可访问
+  IS_WATING // 等爬
+}
+
+
+model Site {
+
+  id String @id @default(cuid())
+
+  title String?
+  host String @unique
+  keywords String?
+  description String?
+  icon String?
+
+  thumbnail String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  pages Page[]
+  crawlTasks CrawlTask[]
+}
+
+model Page {
+  id String @id @default(cuid())
+
+  url String @unique
+  content String? @db.MediumText
+  contentSize Int @default(0)
+
+  cleanHtml String? @db.MediumText
+  cleanHtmlSize Int @default(0)
+
+  isHost Boolean @default(false)
+
+  status PageStatus @default(IS_WATING)
+
+  parentId String?
+  parent Page? @relation("PageRelation", fields: [parentId], references: [id])
+  children Page[] @relation("PageRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  siteId String
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model CrawlTask extends Base {
+
+  siteId String
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
