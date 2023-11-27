@@ -2,9 +2,21 @@
 
 /** @type {import("eslint").Linter.Config} */
 const config = {
-  root: true,
-  // This tells ESLint to load the config from the package `eslint-config-custom`
-  extends: ["custom"],
+  extends: [
+    'plugin:vue/vue3-recommended',
+    '@nuxtjs/eslint-config-typescript',
+    'prettier',
+    'plugin:prettier/recommended',
+  ],
+  rules: {
+    // 'comma-dangle': ['error', 'never'],
+    'vue/multi-word-component-names': 'off',
+    'no-template-curly-in-string': 'off',
+    'require-await': 'off',
+    'n/no-callback-literal': 'off',
+    'vue/no-multiple-template-root': 'off'
+  },
 }
+
 
 module.exports = config
