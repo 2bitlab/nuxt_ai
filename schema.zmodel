@@ -38,7 +38,7 @@ datasource db {
 plugin hooks {
     provider = '@zenstackhq/tanstack-query'
     target = 'vue'
-    output = './lib/hooks'
+    output = './src/modelHooks'
 }
 
 plugin openapi {
