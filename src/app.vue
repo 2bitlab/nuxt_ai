@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { provideHooksContext } from '~/modelHooks'
+import { provideHooksContext } from '@zenstackhq/tanstack-query/runtime/vue'
 
 // Provide tanstack-query context
 // Use an absolute endpoint so server-side fetch works too

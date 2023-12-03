@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { useFindManyBalanceLog, useCountBalanceLog } from '~/modelHooks'
+import type { BalanceLog } from '@prisma/client'
 
-const { data: count } = useCountBalanceLog()
-const { data } = useFindManyBalanceLog()
+const { data: count } = useCount({
+  model: 'balanceLog',
+})
+const { data } = useFindMany<BalanceLog[]>({
+  model: 'balanceLog',
+})
 </script>
 
 <template>

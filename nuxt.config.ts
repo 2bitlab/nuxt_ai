@@ -5,7 +5,7 @@ const baseBuildTranspileList = [
   'qcloud-cos-sts',
   '@juggle/resize-observer',
   'next-auth/providers',
-  '@vueuse/nuxt',
+  // '@vueuse/nuxt',
 ]
 
 const devBuildTranspileList = [...baseBuildTranspileList]
@@ -25,8 +25,8 @@ export default defineNuxtConfig({
   },
   modules: [
     '@sidebase/nuxt-auth', // https://nuxt.com/modules/nuxt-auth
-    // '@nuxtjs/tailwindcss',
-    'nuxt-lodash', // https://nuxt.com/modules/lodash
+    '@nuxtjs/tailwindcss',
+    // 'nuxt-lodash', // https://nuxt.com/modules/lodash
     'nuxt-icon', // https://github.com/nuxt-modules/icon
     '@vueuse/nuxt', // https://nuxt.com/modules/vueuse
   ],

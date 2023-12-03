@@ -36,8 +36,6 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
   getSelectForList,
   createFormat = async (v) => v,
   initOrderBy = () => [],
-  useCount,
-  useFindMany,
 }: {
   model?: ModelType
   getI18nConfig: () => I18nType
@@ -52,9 +50,6 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
   getSelectForList?: () => { select?: Record<string, any> }
   createFormat?: CreateFormatFunc<DataType>
   initOrderBy?: InitOrderByFunc
-
-  useCount: any
-  useFindMany: any
 }) => {
   const getI18nConfig = () =>
     ({
@@ -73,10 +68,11 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
 
   const {
     data: countRef,
-    refresh: countRefresh,
+    suspense: countRefresh,
     status: countStatusRef,
-  } = useCount(whereRef, {
-    immediate: true,
+  } = useCount({
+    model,
+    body: whereRef,
   })
 
   const paginationReactive = reactive<PaginationProps>({
@@ -179,10 +175,11 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
 
   const {
     data: listDataRef,
-    refresh: listRefresh,
+    suspense: listRefresh,
     status: listStatusRef,
-  } = useFindMany(listWhereRef, {
-    immediate: true,
+  } = useFindMany({
+    body: listWhereRef,
+    model,
   })
 
   const listRef = computed(() => {
@@ -232,11 +229,14 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
 
     loadingRef.value = true
     try {
-      await getTrpc().db[model].update.mutate({
-        where: {
-          id,
+      await $fetch(`/api/model/${model}/update`, {
+        method: 'PUT',
+        body: {
+          where: {
+            id,
+          },
+          data,
         },
-        data,
       })
       refresh()
       message.success(i18nRef.dataTableSaveSuccessTips)
@@ -303,9 +303,12 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
           const { id } = selectRowRef.value
           if (id) {
             try {
-              await getTrpc().db[model].delete.mutate({
-                where: {
-                  id,
+              await $fetch(`/api/model/${model}/delete`, {
+                method: 'DELETE',
+                body: {
+                  where: {
+                    id,
+                  },
                 },
               })
 
@@ -351,9 +354,13 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
     try {
       const data = await createFormat(formValueRef)
 
-      await getTrpc().db[model].create.mutate({
-        data,
+      await $fetch(`/api/model/${model}/create`, {
+        method: 'POST',
+        body: {
+          data,
+        },
       })
+
       refresh()
       message.success(i18nRef.dataTableSaveSuccessTips)
 
