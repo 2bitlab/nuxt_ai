@@ -34,6 +34,12 @@ datasource db {
 }
 
 
+plugin trpc {
+    provider = '@zenstackhq/trpc'
+    output = 'src/server/trpc/routers/db'
+}
+
+
 plugin openapi {
     provider = '@zenstackhq/openapi'
     output = './openapi.json'

@@ -37,7 +37,7 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
   createFormat = async (v) => v,
   initOrderBy = () => [],
 }: {
-  model?: ModelType
+  model: ModelType
   getI18nConfig: () => I18nType
   getColumns: (
     updateFunc: UpdateFunc<DataType>,
@@ -68,11 +68,10 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
 
   const {
     data: countRef,
-    suspense: countRefresh,
+    refresh: countRefresh,
     status: countStatusRef,
-  } = useCount({
-    model,
-    body: whereRef,
+  } = getTrpc().db[model].count.useQuery(whereRef, {
+    immediate: true,
   })
 
   const paginationReactive = reactive<PaginationProps>({
@@ -175,11 +174,10 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
 
   const {
     data: listDataRef,
-    suspense: listRefresh,
+    refresh: listRefresh,
     status: listStatusRef,
-  } = useFindMany({
-    body: listWhereRef,
-    model,
+  } = getTrpc().db[model].findMany.useQuery(listWhereRef, {
+    immediate: true,
   })
 
   const listRef = computed(() => {
@@ -229,14 +227,11 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
 
     loadingRef.value = true
     try {
-      await $fetch(`/api/model/${model}/update`, {
-        method: 'PUT',
-        body: {
-          where: {
-            id,
-          },
-          data,
+      await getTrpc().db[model].update.mutate({
+        where: {
+          id,
         },
+        data,
       })
       refresh()
       message.success(i18nRef.dataTableSaveSuccessTips)
@@ -303,12 +298,9 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
           const { id } = selectRowRef.value
           if (id) {
             try {
-              await $fetch(`/api/model/${model}/delete`, {
-                method: 'DELETE',
-                body: {
-                  where: {
-                    id,
-                  },
+              await getTrpc().db[model].delete.mutate({
+                where: {
+                  id,
                 },
               })
 
@@ -354,13 +346,9 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
     try {
       const data = await createFormat(formValueRef)
 
-      await $fetch(`/api/model/${model}/create`, {
-        method: 'POST',
-        body: {
-          data,
-        },
+      await getTrpc().db[model].create.mutate({
+        data,
       })
-
       refresh()
       message.success(i18nRef.dataTableSaveSuccessTips)
 

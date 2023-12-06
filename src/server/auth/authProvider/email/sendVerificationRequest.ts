@@ -1,6 +1,6 @@
 import { createTransport } from 'nodemailer'
-import type { SendVerificationRequestParams } from 'next-auth/providers/email'
-import type { Theme } from 'next-auth'
+import type { SendVerificationRequestParams } from '@auth/core/providers/email'
+import type { Theme } from '@auth/core/types'
 
 /**
  *使用HTML body 代替正文内容

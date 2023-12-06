@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 // https://next-auth.js.org/providers/google
-import Provider from 'next-auth/providers/google'
-import type { TokenSet } from 'next-auth'
+import Provider from '@auth/core/providers/google'
+import type { TokenSet } from '@auth/core/types'
 
 import type { Account } from '@prisma/client'
 import { RefreshTokenFunc } from '../types'
@@ -65,7 +65,7 @@ export const refreshToken: RefreshTokenFunc = async (token) => {
       data: {
         access_token: newToken.access_token,
         expires_at: new Date(newToken.expires_at).getTime(),
-        refresh_token: newToken.refresh_token,
+        refresh_token: newToken.refresh_token as string,
       },
       where: {
         provider_providerAccountId: {

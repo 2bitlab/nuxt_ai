@@ -1,5 +1,5 @@
 <template>
-  <div>Nuxt Basic Example</div>
+  <div>TRPC-Nuxt Basic Example</div>
 </template>
 
 <script lang="ts" setup>

@@ -1,4 +1,4 @@
-import Provider from 'next-auth/providers/email'
+import Provider from '@auth/core/providers/email'
 
 import { sendVerificationRequest } from './sendVerificationRequest'
 import { env } from '~/env'

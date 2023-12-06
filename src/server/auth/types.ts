@@ -1,4 +1,4 @@
-import type { JWT } from 'next-auth/jwt'
+import type { JWT } from '@auth/core/jwt'
 
 export type UserRole = 'admin' | string
 export type PermissionsType = '' | string

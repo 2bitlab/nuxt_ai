@@ -1,4 +1,4 @@
-import Provider from 'next-auth/providers/discord'
+import Provider from '@auth/core/providers/discord'
 
 import { env } from '~/env'
 

@@ -1,6 +1,6 @@
-import Provider from 'next-auth/providers/credentials'
+import Provider from '@auth/core/providers/credentials'
 
-import type { Session } from 'next-auth'
+import type { Session } from '@auth/core/types'
 
 import { checkPassword } from './password'
 import { getPrisma } from '~/server/database'
@@ -61,11 +61,11 @@ export const getProvider = () => {
         // placeholder: "请输入密码",
       },
     },
-    authorize: async (credentials: { email: string; password: string }) => {
-      const { email = '', password } = credentials || {}
-
+    authorize: async (credentials) => {
+      const { email, password } = credentials || {}
+      console.error('Credentials authorize email', email, 'password', password)
       try {
-        const user = await checkUserPassword(email, password)
+        const user = await checkUserPassword(email as string, password as string)
         return user
       } catch (error) {
         console.error('Credentials getProvider error', error)

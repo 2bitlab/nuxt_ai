@@ -1,4 +1,4 @@
-import Provider from 'next-auth/providers/github'
+import Provider from '@auth/core/providers/github'
 
 import { env } from '~/env'
 

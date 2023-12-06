@@ -1,13 +1,6 @@
 /* eslint-disable camelcase */
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import {
-  type NextAuthOptions,
-  // type User,
-  DefaultSession,
-  TokenSet,
-} from 'next-auth'
-
-import type { DefaultJWT } from 'next-auth/jwt'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import type { AuthConfig } from '@auth/core/types'
 import {
   getGithubProvider,
   getEmailProvider,
@@ -52,8 +45,8 @@ const updateLastAccessed = async (userId: string) => {
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module 'next-auth' {
-  interface Session extends DefaultSession {
+declare module '@auth/core/types' {
+  interface Session {
     user: DefaultSession['user'] & {
       id: string
       // roles: UserRole[]
@@ -70,10 +63,12 @@ declare module 'next-auth' {
   // }
 }
 
-declare module 'next-auth/jwt' {
-  interface JWT extends DefaultJWT, TokenSet {
+declare module '@auth/core/jwt' {
+  interface JWT {
     provider?: string
     error?: ErrorType
+    expires_at?: number
+    user_id?: string
   }
 }
 
@@ -98,194 +93,200 @@ const getProviders = () => {
      *
      * @see https://next-auth.js.org/providers/github
      */
-  ].filter((i) => i) as NextAuthOptions['providers']
+  ].filter((i) => i) as AuthConfig['providers']
 }
 
+let authConfig: AuthConfig
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
  * @see https://next-auth.js.org/configuration/options
  */
-export const getAuthOptions = (): NextAuthOptions => ({
-  // https://next-auth.js.org/getting-started/upgrade-v4#jwt-configuration
-  session: {
-    strategy: 'jwt',
-  },
-  jwt: {
-    secret: env.JWT_SECRET || 'test',
-    maxAge: d1 * 7, // 7d,
-  },
-  callbacks: {
-    jwt: async (props) => {
-      const {
-        token,
-        user,
-        account,
-        // profile, isNewUser
-      } = props
-      // console.log('next auth callbacks jwt props', props)
-      // console.log('next auth callbacks jwt token', token)
-      // console.log('next auth callbacks jwt user', user)
-      // console.log('next auth callbacks jwt account', account)
-      // console.log('next auth callbacks jwt profile', profile)
-      // console.log('next auth callbacks jwt isNewUser', isNewUser)
-      const { provider } = account || {}
+export const getAuthOptions = (): AuthConfig => {
+  if (!authConfig) {
+    authConfig = {
+      // https://next-auth.js.org/getting-started/upgrade-v4#jwt-configuration
+      session: {
+        strategy: 'jwt',
+      },
+      jwt: {
+        maxAge: d1 * 7, // 7d,
+      },
+      secret: env.JWT_SECRET || 'test',
+      callbacks: {
+        jwt: async (props) => {
+          const {
+            token,
+            user,
+            account,
+            // profile, isNewUser
+          } = props
+          // console.log('next auth callbacks jwt props', props)
+          // console.log('next auth callbacks jwt token', token)
+          // console.log('next auth callbacks jwt user', user)
+          // console.log('next auth callbacks jwt account', account)
+          // console.log('next auth callbacks jwt profile', profile)
+          // console.log('next auth callbacks jwt isNewUser', isNewUser)
+          const { provider } = account || {}
 
-      let userId = (token?.user_id || '') as string
-      if (user) {
-        const { name, email, image, id } = user || {}
-        userId = id
-        token.name = name
-        token.email = email
-        token.image = image
-        token.user_id = id
-      }
-
-      if (provider) {
-        token.provider = provider
-      }
-
-      const now = Date.now()
-
-      let isWorking = false
-      if (token.expires_at) {
-        isWorking = now < token.expires_at * 1000
-      }
-      // console.log('next auth callbacks jwt userId', userId)
-      if (userId) {
-        updateLastAccessed(userId as any)
-      }
-
-      // console.log('next auth callbacks jwt token isWorking', isWorking, 'token.expires_at', token.expires_at)
-
-      if (account) {
-        const { access_token, expires_in = defExpiresIn, refresh_token } = account
-        // Save the access token and refresh token in the JWT on the initial login
-
-        return {
-          ...token,
-          access_token,
-          expires_at: Math.floor(now / 1000 + (expires_in as number)),
-          refresh_token,
-        }
-      } else if (isWorking) {
-        // If the access token has not expired yet, return it
-        return token
-      } else {
-        // If the access token has expired, try to refresh it
-        try {
-          const funcMap: Record<string, RefreshTokenFunc> = {
-            google: refreshGoogleToken,
+          let userId = (token?.user_id || '') as string
+          if (user) {
+            const { name, email, image, id } = user || {}
+            userId = id
+            token.name = name
+            token.email = email
+            token.image = image
+            token.user_id = id
           }
 
-          let func
           if (provider) {
-            func = funcMap[provider]
+            token.provider = provider
           }
 
-          if (func) {
-            const newToken = await func(token)
-            return newToken
+          const now = Date.now()
+
+          let isWorking = false
+          if (token.expires_at) {
+            isWorking = now < token.expires_at * 1000
           }
-        } catch (error) {
-          console.error('Error refreshing access token', error)
-          // The error property will be used client-side to handle the refresh token error
-        }
-        return { ...token, error: 'RefreshAccessTokenError' }
-      }
-    },
-    session: (props) => {
-      const { session, user, token } = props
-      // console.log('next auth callbacks session props', props)
-      // console.log('next auth callbacks session token', token)
-      // console.log('next auth callbacks session user', user)
-      // console.log('next auth callbacks session session', session)
+          // console.log('next auth callbacks jwt userId', userId)
+          if (userId) {
+            updateLastAccessed(userId as any)
+          }
 
-      const { error, user_id } = token || {}
+          // console.log('next auth callbacks jwt token isWorking', isWorking, 'token.expires_at', token.expires_at)
 
-      const sessionUser = {
-        ...(session.user || {}),
-        ...(user || {}),
-      }
-      if (user_id) {
-        sessionUser.id = `${user_id}`
-      }
+          if (account) {
+            const { access_token, expires_in = defExpiresIn, refresh_token } = account
+            // Save the access token and refresh token in the JWT on the initial login
 
-      return {
-        ...session,
-        user: sessionUser,
-        error,
-      }
-    },
-    redirect: (props) => {
-      const { url, baseUrl } = props
-      // console.log('next auth callbacks redirect props', props)
-      // console.log('next auth callbacks redirect url', url)
-      // console.log('next auth callbacks redirect baseUrl', baseUrl)
+            return {
+              ...token,
+              access_token,
+              expires_at: Math.floor(now / 1000 + (expires_in as number)),
+              refresh_token,
+            }
+          } else if (isWorking) {
+            // If the access token has not expired yet, return it
+            return token
+          } else {
+            // If the access token has expired, try to refresh it
+            try {
+              const funcMap: Record<string, RefreshTokenFunc> = {
+                google: refreshGoogleToken,
+              }
 
-      const uri = new URL(url)
-      // console.log('next auth callbacks redirect uri', uri)
+              let func
+              if (provider) {
+                func = funcMap[provider]
+              }
 
-      const { pathname, origin } = uri
-      const gotoHomePathName = ['/error', '/signin']
-      if (gotoHomePathName.includes(pathname)) {
-        return baseUrl
-      }
+              if (func) {
+                const newToken = await func(token)
+                return newToken
+              }
+            } catch (error) {
+              console.error('Error refreshing access token', error)
+              // The error property will be used client-side to handle the refresh token error
+            }
+            return { ...token, error: 'RefreshAccessTokenError' }
+          }
+        },
+        session: (props) => {
+          const { session, user, token } = props
+          // console.log('next auth callbacks session props', props)
+          // console.log('next auth callbacks session token', token)
+          // console.log('next auth callbacks session user', user)
+          // console.log('next auth callbacks session session', session)
 
-      // Allows relative callback URLs
-      if (url.startsWith('/')) {
-        return `${baseUrl}${url}`
-      }
-      // Allows callback URLs on the same origin
-      else if (origin === baseUrl) {
-        return url
-      }
-      return baseUrl
-    },
-    // signIn: (props) => {
-    //   const { user, account, profile, email, credentials } = props
-    //   // console.log('next auth callbacks signIn props', props)
-    //   // console.log('next auth callbacks signIn user', user)
-    //   // console.log('next auth callbacks signIn account', account)
-    //   // console.log('next auth callbacks signIn profile', profile)
-    //   // console.log('next auth callbacks signIn email', email)
-    //   // console.log('next auth callbacks signIn credentials', credentials)
+          const { error, user_id } = token || {}
 
-    //   return true
-    // },
-  },
-  adapter: PrismaAdapter(getPrisma()),
-  providers: getProviders(),
-  pages: {
-    signIn: '/signin',
-    error: '/error',
-  },
-  // events: {
-  //   async signIn({ user }: { user: User }) {
-  //     // console.log('events signIn', user)
-  //     // const spaceCount = await prisma.spaceUser.count({
-  //     //     where: {
-  //     //         userId: user.id,
-  //     //     },
-  //     // });
-  //     // if (spaceCount > 0) {
-  //     //     return;
-  //     // }
-  //     // console.log(`User ${user.id} doesn't belong to any space. Creating one.`);
-  //     // const space = await prisma.space.create({
-  //     //     data: {
-  //     //         name: `${user.name || user.email}'s space`,
-  //     //         slug: nanoid(8),
-  //     //         members: {
-  //     //             create: [
-  //     //                 {
-  //     //                     userId: user.id,
-  //     //                     role: SpaceUserRole.ADMIN,
-  //     //                 },
-  //     //             ],
-  //     //         },
-  //     //     },
-  //     // });
-  //   },
-  // },
-})
+          const sessionUser = {
+            ...(session.user || {}),
+            ...(user || {}),
+          }
+          if (user_id) {
+            sessionUser.id = `${user_id}`
+          }
+
+          return {
+            ...session,
+            user: sessionUser,
+            error,
+          }
+        },
+        redirect: (props) => {
+          const { url, baseUrl } = props
+          console.log('next auth callbacks redirect props', props)
+          console.log('next auth callbacks redirect url', url)
+          console.log('next auth callbacks redirect baseUrl', baseUrl)
+
+          const uri = new URL(url)
+          // console.log('next auth callbacks redirect uri', uri)
+
+          const { pathname, origin } = uri
+          const gotoHomePathName = ['/error', '/signin']
+          if (gotoHomePathName.includes(pathname)) {
+            return baseUrl
+          }
+
+          // Allows relative callback URLs
+          if (url.startsWith('/')) {
+            return `${baseUrl}${url}`
+          }
+          // Allows callback URLs on the same origin
+          else if (origin === baseUrl) {
+            return url
+          }
+          return baseUrl
+        },
+        // signIn: (props) => {
+        //   const { user, account, profile, email, credentials } = props
+        //   // console.log('next auth callbacks signIn props', props)
+        //   // console.log('next auth callbacks signIn user', user)
+        //   // console.log('next auth callbacks signIn account', account)
+        //   // console.log('next auth callbacks signIn profile', profile)
+        //   // console.log('next auth callbacks signIn email', email)
+        //   // console.log('next auth callbacks signIn credentials', credentials)
+
+        //   return true
+        // },
+      },
+      adapter: PrismaAdapter(getPrisma()) as AuthConfig['adapter'],
+      providers: getProviders(),
+      pages: {
+        signIn: '/signin',
+        error: '/error',
+      },
+      // events: {
+      //   async signIn({ user }: { user: User }) {
+      //     // console.log('events signIn', user)
+      //     // const spaceCount = await prisma.spaceUser.count({
+      //     //     where: {
+      //     //         userId: user.id,
+      //     //     },
+      //     // });
+      //     // if (spaceCount > 0) {
+      //     //     return;
+      //     // }
+      //     // console.log(`User ${user.id} doesn't belong to any space. Creating one.`);
+      //     // const space = await prisma.space.create({
+      //     //     data: {
+      //     //         name: `${user.name || user.email}'s space`,
+      //     //         slug: nanoid(8),
+      //     //         members: {
+      //     //             create: [
+      //     //                 {
+      //     //                     userId: user.id,
+      //     //                     role: SpaceUserRole.ADMIN,
+      //     //                 },
+      //     //             ],
+      //     //         },
+      //     //     },
+      //     // });
+      //   },
+      // },
+    }
+  }
+  return authConfig
+}
