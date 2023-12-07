@@ -69,8 +69,12 @@ export default defineNuxtConfig({
 
   tailwindcss: {
     config: {
+      content: ['./**/*.{vue}'],
       corePlugins: {
         preflight: false,
+      },
+      experimental: {
+        templateInterpolation: true,
       },
     },
   },

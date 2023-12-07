@@ -6,17 +6,16 @@
 import { useStorage } from '@vueuse/core'
 const inviterIdStorageRef = useStorage('inviterId', '')
 
-const { user: userRef } = useAuth()
+const currentUserIdRef = useCurrentUserId()
 
 const checkPropsRef = computed(() => {
   const inviterId = inviterIdStorageRef.value
-  const user = userRef.value
-  const { id } = user || {}
+  const currentUserId = currentUserIdRef.value
 
-  if (inviterId && id && id !== inviterId) {
+  if (inviterId && currentUserId && currentUserId !== inviterId) {
     return {
       inviterId,
-      id,
+      id: currentUserId,
     }
   }
 })

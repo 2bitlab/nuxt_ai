@@ -22,7 +22,9 @@ interface CropResult {
 const props = defineProps<{
   value: V
   onCrop?: (res: CropResult) => void
-  options?: Record<string, any> // CropperClass 上的构建参数
+  options?: {
+    aspectRatio?: number
+  } // CropperClass 上的构建参数
 }>()
 
 const getCropper = async (): Promise<Cropper> => {

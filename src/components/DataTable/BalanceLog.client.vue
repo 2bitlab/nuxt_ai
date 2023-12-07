@@ -107,7 +107,7 @@ const getI18nConfig = () => ({
 
 type I18nType = ReturnType<typeof getI18nConfig>
 
-const { user: currentUserRef } = useAuth()
+const currentUserIdRef = useCurrentUserId()
 
 const {
   paginationReactive,
@@ -299,7 +299,7 @@ const {
       formValueRef.balance = formValueRef.change
     }
 
-    formValueRef.creatorId = currentUserRef.value.id
+    formValueRef.creatorId = currentUserIdRef.value
 
     return formValueRef
   },

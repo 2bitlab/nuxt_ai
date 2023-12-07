@@ -10,17 +10,11 @@
     </NUpload>
     <NModal v-model:show="showModalRef" preset="card" style="width: 550px" :mask-closable="false">
       <div class="flex justify-center gap-2">
-        <div class="h-96 w-96">
-          <Cropper v-if="cropperUrlRef" :value="cropperUrlRef" :on-crop="onCrop" />
+        <div :class="cropperSize ?? 'h-96 w-96'">
+          <Cropper v-if="cropperUrlRef" :value="cropperUrlRef" :on-crop="onCrop" :options="cropperOptions" />
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="w-20">
-            <img v-if="cropImgUrlRef" class="h-auto w-full" :src="cropImgUrlRef" />
-          </div>
-          <div class="w-10">
-            <img v-if="cropImgUrlRef" class="h-auto w-full" :src="cropImgUrlRef" />
-          </div>
-          <div class="w-5">
+        <div v-if="previewConfig" class="flex flex-col gap-2">
+          <div v-for="(previewConfigItem, i) in previewConfig" :key="i" :class="previewConfigItem">
             <img v-if="cropImgUrlRef" class="h-auto w-full" :src="cropImgUrlRef" />
           </div>
         </div>
@@ -49,6 +43,9 @@ type V = string
 
 const props = defineProps<{
   value: V
+  previewConfig?: string[]
+  cropperSize?: string
+  cropperOptions?: Record<string, any>
 }>()
 
 const emit = defineEmits<{
