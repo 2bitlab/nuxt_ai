@@ -3,16 +3,14 @@
     <NLayoutHeader>
       <Header />
     </NLayoutHeader>
-    <NLayout has-sider>
-      <NLayoutSider> </NLayoutSider>
+    <NLayout>
       <NLayoutContent>
         <slot />
       </NLayoutContent>
     </NLayout>
-    <NLayoutFooter> </NLayoutFooter>
   </NLayout>
 </template>
 
 <script setup lang="ts">
-import { NLayout, NLayoutHeader, NLayoutContent, NLayoutSider, NLayoutFooter } from 'naive-ui'
+import { NLayout, NLayoutHeader, NLayoutContent } from 'naive-ui'
 </script>

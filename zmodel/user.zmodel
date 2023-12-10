@@ -3,6 +3,7 @@ import "i18n"
 import "config"
 import "video"
 import "crawl"
+import "company"
 // https://github.com/nextauthjs/next-auth/blob/main/packages/adapter-prisma/prisma/custom.prisma
 
 
@@ -34,6 +35,16 @@ model User {
   // 基础信息相关
 
   // 其他关联
+
+  currentCompanyId String?
+  company Company? @relation('ActiveCompanyUser', fields: [currentCompanyId], references: [id])
+
+  currentShopId String?
+  shop Shop? @relation('ActiveShopUser', fields: [currentShopId], references: [id])
+
+  companys Company[]
+  companyMembers CompanyMember[]
+
   shops Shop[]
   producs Produce[]
 
@@ -54,6 +65,9 @@ model User {
   crawlTasks CrawlTask[]
 
   videos Video[]
+  videoTasks VideoTask[]
+
+  handleVideos VideoTask[]  @relation("VideoTaskHandler")
 }
 
 model Account {

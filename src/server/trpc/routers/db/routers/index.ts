@@ -32,12 +32,15 @@ import createFreeExpressFeeRuleCityRouter from './FreeExpressFeeRuleCity.router'
 import createExpressFeeRuleRouter from './ExpressFeeRule.router'
 import createExpressFeeRuleCityRouter from './ExpressFeeRuleCity.router'
 import createPhysicalProduceRouter from './PhysicalProduce.router'
+import createCompanyMemberRouter from './CompanyMember.router'
+import createCompanyRouter from './Company.router'
 import createI18nValueRouter from './I18nValue.router'
 import createConfigValueRouter from './ConfigValue.router'
 import createVideoRouter from './Video.router'
 import createVideoTypeRouter from './VideoType.router'
 import createVideoTagRouter from './VideoTag.router'
 import createVideoSetRouter from './VideoSet.router'
+import createVideoTaskRouter from './VideoTask.router'
 import createSiteRouter from './Site.router'
 import createPageRouter from './Page.router'
 import createCrawlTaskRouter from './CrawlTask.router'
@@ -119,12 +122,15 @@ export function createRouter<Router extends RouterFactory<BaseConfig>, Proc exte
     expressFeeRule: createExpressFeeRuleRouter<Router, Proc>(router, procedure),
     expressFeeRuleCity: createExpressFeeRuleCityRouter<Router, Proc>(router, procedure),
     physicalProduce: createPhysicalProduceRouter<Router, Proc>(router, procedure),
+    companyMember: createCompanyMemberRouter<Router, Proc>(router, procedure),
+    company: createCompanyRouter<Router, Proc>(router, procedure),
     i18nValue: createI18nValueRouter<Router, Proc>(router, procedure),
     configValue: createConfigValueRouter<Router, Proc>(router, procedure),
     video: createVideoRouter<Router, Proc>(router, procedure),
     videoType: createVideoTypeRouter<Router, Proc>(router, procedure),
     videoTag: createVideoTagRouter<Router, Proc>(router, procedure),
     videoSet: createVideoSetRouter<Router, Proc>(router, procedure),
+    videoTask: createVideoTaskRouter<Router, Proc>(router, procedure),
     site: createSiteRouter<Router, Proc>(router, procedure),
     page: createPageRouter<Router, Proc>(router, procedure),
     crawlTask: createCrawlTaskRouter<Router, Proc>(router, procedure),

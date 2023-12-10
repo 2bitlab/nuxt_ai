@@ -97,6 +97,10 @@ const getI18nConfig = () => ({
 
   dataTableUserBlockIng: '禁用中',
   dataTableUserUnBlockIng: '没禁用',
+
+  dataTableUserEmailHasBeenRegistered: '邮箱已被注册',
+  dataTableUserNameHasBeenRegistered: '昵称已被注册',
+  dataTableUserEmailFormatError: '请使用正确的邮箱格式',
 })
 
 type I18nType = ReturnType<typeof getI18nConfig>
@@ -306,8 +310,35 @@ const {
       email: [
         {
           required: true,
-          message: evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableUserEmail }),
-          trigger: ['blur'],
+          trigger: 'blur',
+          validator: (_, value: string) => {
+            const v = value.trim()
+            if (!v) {
+              return Promise.reject(
+                Error(evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableUserEmail }))
+              )
+            }
+
+            if (isEmail(v) === false) {
+              return Promise.reject(Error(i18nRef.dataTableUserEmailFormatError))
+            }
+
+            return new Promise<void>((resolve, reject) => {
+              getTrpc()
+                .db.user.findUnique.query({
+                  where: {
+                    email: v,
+                  },
+                })
+                .then((user) => {
+                  if (user) {
+                    reject(Error(i18nRef.dataTableUserEmailHasBeenRegistered)) // reject with error message
+                  } else {
+                    resolve()
+                  }
+                })
+            })
+          },
         },
       ],
       password: [
@@ -315,6 +346,35 @@ const {
           required: true,
           message: evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableUserPassword }),
           trigger: ['blur'],
+        },
+      ],
+      name: [
+        {
+          required: true,
+          trigger: 'blur',
+          validator: (_, value: string) => {
+            if (!value.trim()) {
+              return Promise.reject(
+                Error(evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableUserName }))
+              )
+            }
+
+            return new Promise<void>((resolve, reject) => {
+              getTrpc()
+                .db.user.findUnique.query({
+                  where: {
+                    name: value.trim(),
+                  },
+                })
+                .then((user) => {
+                  if (user) {
+                    reject(Error(i18nRef.dataTableUserNameHasBeenRegistered)) // reject with error message
+                  } else {
+                    resolve()
+                  }
+                })
+            })
+          },
         },
       ],
     }
@@ -328,12 +388,13 @@ const {
   }),
   createFormat: async (formValueRef) => {
     const hashPassword = await getTrpc().password.hash.query({
-      email: formValueRef.email,
-      password: formValueRef.password,
+      email: formValueRef.email.trim(),
+      password: formValueRef.password.trim(),
     })
 
     return {
-      ...formValueRef,
+      name: formValueRef.name.trim(),
+      email: formValueRef.email.trim(),
       password: hashPassword,
     }
   },

@@ -1,6 +1,7 @@
 import "base"
 import "currency"
 import "user"
+import "company"
 
 // 店铺
 
@@ -16,8 +17,14 @@ model Shop extends Base {
 
   status ShowStatus @default(DRAFT)
 
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
   producs Produce[]
   shopMember ShopMember[]
+
+  activeUsers User[] @relation('ActiveShopUser') // currentCompanyId 的用户
+
 }
 
 enum ShopMemberRole {
@@ -27,8 +34,8 @@ enum ShopMemberRole {
 }
 
 model ShopMember {
-
-  role ShopMemberRole
+  id String @id @default(cuid())
+  role ShopMemberRole @default(SALER)
 
   shopId String
   shop Shop @relation(fields: [shopId], references: [id], onDelete: Cascade)
@@ -36,7 +43,7 @@ model ShopMember {
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([shopId, userId])
+  @@unique([shopId, userId])
 }
 
 // 价格 规格
@@ -125,7 +132,6 @@ enum LimitBuyType {
 model Produce extends Base {
   // 描述信息
   name String
-
 
   status ProduceStatus @default(DRAFT)
 

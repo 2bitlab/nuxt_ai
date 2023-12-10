@@ -7,7 +7,7 @@
             <NGlobalStyle />
             <NuxtLayout>
               <NuxtPage />
-              <UserSaveInviter />
+              <UserCheck />
             </NuxtLayout>
           </NDialogProvider>
         </NLoadingBarProvider>

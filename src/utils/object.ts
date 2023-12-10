@@ -92,3 +92,19 @@ if (import.meta.vitest) {
     expect(JSON.stringify(fixEmptyKey([{ a: '' }]))).toBe(JSON.stringify([{}]))
   })
 }
+
+export const setResValue2Form = (form: any, res: any) => {
+  console.log('setResValue2Form form', form, 'res', res)
+
+  if (res) {
+    Object.keys(form).forEach((key) => {
+      const val = (res as any)[key]
+      const oldVal = (form as any)[key]
+
+      console.log('setResValue2Form key', key, 'val', val, 'oldVal', oldVal)
+      if (val !== undefined && JSON.stringify(val) !== JSON.stringify(oldVal)) {
+        ;(form as any)[key] = val
+      }
+    })
+  }
+}

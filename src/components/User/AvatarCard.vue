@@ -1,4 +1,3 @@
-import { boolean } from 'zod';
 <template>
   <div class="flex items-center gap-2 overflow-hidden" :title="showNameRef">
     <NAvatar :src="avatarUrlRef" :round="round" :size="size ?? 'small'">{{ avatarTextRef }}</NAvatar>

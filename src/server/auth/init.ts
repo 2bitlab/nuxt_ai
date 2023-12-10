@@ -149,7 +149,7 @@ export const getAuthOptions = (): AuthConfig => {
           if (token.expires_at) {
             isWorking = now < token.expires_at * 1000
           }
-          // console.log('next auth callbacks jwt userId', userId)
+          console.log('next auth callbacks jwt userId', userId)
           if (userId) {
             updateLastAccessed(userId as any)
           }

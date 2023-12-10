@@ -1,0 +1,45 @@
+
+import "base"
+
+
+enum CompanyStatus {
+  VERIFIED // 已认证
+  WAIT_CERTIFIED // 待认证
+  REVIEW // 审核中
+  LOGGED_OUT // 已注销
+}
+
+enum CompanyMemberRole {
+  OWNER // 拥有者
+  ADMIN // 管理员
+  MEMBER // 成员
+}
+
+model CompanyMember {
+  id String @id @default(cuid())
+  role CompanyMemberRole @default(MEMBER)
+
+  companyId String
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  @@unique([companyId, userId])
+}
+
+
+model Company extends Base {
+  name String @unique
+  logo String? // logo
+
+  status CompanyStatus @default(WAIT_CERTIFIED)
+
+  companyMembers CompanyMember[]
+  shops Shop[]
+
+  activeUsers User[] @relation('ActiveCompanyUser') // currentCompanyId 的用户
+}

@@ -133,7 +133,7 @@ const {
             },
           })
         },
-        filterOptions: groupLangRef.value.map((item) => ({
+        filterOptions: (groupLangRef.value || []).map((item) => ({
           label: `${item.lang} (${item._count.lang})`,
           value: item.lang,
         })),
