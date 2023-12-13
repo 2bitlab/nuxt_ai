@@ -479,36 +479,5 @@ watch(
   }, 300)
 )
 
-const rangeCreatedAtRef = ref(null)
-
-watch(
-  () => rangeCreatedAtRef.value,
-  debounce((newValue) => {
-    const { where } = whereRef.value
-    console.log('rangeCreatedAtRef newValue', newValue)
-
-    const [start, end] = newValue || []
-
-    console.log('rangeCreatedAtRef newValue start', start, 'end', end)
-
-    let newWhere = {
-      createdAt: undefined,
-    }
-    if (start && end) {
-      newWhere = {
-        createdAt: {
-          gte: new Date(start),
-          lt: new Date(end),
-        },
-      }
-    }
-
-    whereRef.value = {
-      where: {
-        ...where,
-        ...newWhere,
-      },
-    }
-  }, 300)
-)
+const { rangeCreatedAtRef } = useCreatedAtSelect(whereRef)
 </script>

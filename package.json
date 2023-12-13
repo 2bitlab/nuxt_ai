@@ -111,6 +111,7 @@
     "cos-js-sdk-v5": "^1.4.21",
     "cos-nodejs-sdk-v5": "^2.12.5",
     "dayjs": "^1.11.10",
+    "https-proxy-agent": "^7.0.2",
     "lodash-es": "^4.17.21",
     "nodemailer": "^6.9.7",
     "openai": "^4.20.0",

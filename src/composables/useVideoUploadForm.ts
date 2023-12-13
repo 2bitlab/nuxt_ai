@@ -45,6 +45,8 @@ const getBaseI18nConfig = () => {
     creatorContentUploadFormVideoPublishedAll: '公开',
     creatorContentUploadFormVideoPublishedMyself: '及自己可见',
 
+    creatorContentUploadFormPrice: '价格',
+
     creatorContentUploadFormPublishSetting: '发布设置',
     creatorContentUploadFormPublishBtn: '发布',
   }
@@ -249,6 +251,7 @@ export const useVideoEditForm = () => {
     videoTypeId: '',
     videoTags: [],
     videoSetId: '',
+    price: 0,
     published: true,
   })
 
@@ -508,6 +511,7 @@ export const useVideoUploadForm = () => {
         videoSetId: '',
         published: true,
         creatorId: '',
+        price: 0,
       },
       fixEmptyKey(draftVideoFormDataRef.value)
     )

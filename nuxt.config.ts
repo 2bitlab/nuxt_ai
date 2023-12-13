@@ -35,6 +35,11 @@ export default defineNuxtConfig({
     transpile: isProduction ? productionBuildTranspileList : devBuildTranspileList,
   },
 
+  sourcemap: {
+    server: isDev,
+    client: isDev,
+  },
+
   vite: {
     optimizeDeps: {
       include: isDev ? ['naive-ui', 'vueuc'] : [],
@@ -69,7 +74,7 @@ export default defineNuxtConfig({
 
   tailwindcss: {
     config: {
-      content: ['./**/*.{vue}'],
+      content: ['src/**/*.{vue}'],
       corePlugins: {
         preflight: false,
       },

@@ -8,6 +8,8 @@ export const getDataTableI18nConfig = () => ({
   dataTableDelSuccessTips: '删除成功',
   dataTableDelErrorTips: '删除失败',
   dataTableSaveRequiredTips: '请填写${text}',
+  dataTableCreatedAt: '创建时间',
+  dataTableCreator: '创建者',
 })
 
 export type DataTableI18nType = ReturnType<typeof getDataTableI18nConfig>

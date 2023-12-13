@@ -24,6 +24,8 @@ export const useVideoList = () => {
 
   const { i18nRef } = useI18n(getI18nConfig())
 
+  const currentUserIdRef = useCurrentUserId()
+
   const checkVideoTagsRef = ref<string[]>([])
 
   const checkVideoTypeChildrenRef = ref<VideoTypeItem[]>([])
@@ -79,6 +81,15 @@ export const useVideoList = () => {
         videoTags: {
           select: {
             label: true,
+          },
+        },
+        videoTasks: {
+          select: {
+            id: true,
+            status: true,
+          },
+          where: {
+            userId: currentUserIdRef.value,
           },
         },
       },
@@ -356,6 +367,8 @@ export const useVideoList = () => {
       })
     }
   }
+
+  // const addOrder = async () => {}
 
   return {
     i18nRef,

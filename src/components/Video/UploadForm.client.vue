@@ -75,6 +75,10 @@
             />
           </NFormItem>
 
+          <NFormItem :label="i18nRef.creatorContentUploadFormPrice" path="price">
+            <NInputNumber v-model:value="formValue.price" :parse="parseCurrency" :format="formatCurrency" />
+          </NFormItem>
+
           <NButton :loading="loadingRef" @click="handleSaveButtonClick">{{
             i18nRef.creatorContentUploadFormPublishBtn
           }}</NButton>
@@ -162,7 +166,20 @@
 </template>
 
 <script setup lang="ts">
-import { NUpload, NButton, NCascader, NForm, NFormItem, NInput, NUploadDragger, NSelect, NProgress } from 'naive-ui'
+import {
+  NUpload,
+  NInputNumber,
+  NButton,
+  NCascader,
+  NForm,
+  NFormItem,
+  NInput,
+  NUploadDragger,
+  NSelect,
+  NProgress,
+} from 'naive-ui'
+
+import { parseCurrency, formatCurrency } from '~/utils/str'
 
 const {
   formValue,

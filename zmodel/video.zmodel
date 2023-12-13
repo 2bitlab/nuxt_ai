@@ -20,6 +20,13 @@ model Video extends Base {
   videoSetId String?
   videoSet VideoSet? @relation(fields: [videoSetId], references: [id])
 
+  //
+  price Decimal @default(0) // 售价
+  audioUrl String?
+  copywritingUrl String? // 文案
+  copywriting String? // 文案
+
+  // 相关
   videoTasks VideoTask[]
 }
 
@@ -51,7 +58,7 @@ model VideoSet {
 
 
 enum VideoTaskStatus {
-  WAIT_HANDL // 等接单
+  WAIT_HANDEL // 等接单
   PROCESSING // 已接单，处理中
   WAIT_CONFIRM // 已处理，等确认
   DONE // 已确认
@@ -64,4 +71,9 @@ model VideoTask extends Base {
 
   handlerId String?
   handler User? @relation("VideoTaskHandler", fields: [handlerId], references: [id])
+
+
+  status VideoTaskStatus @default(WAIT_HANDEL)
+
+  price Decimal @default(0)
 }
