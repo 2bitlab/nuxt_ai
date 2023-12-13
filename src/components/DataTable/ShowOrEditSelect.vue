@@ -8,7 +8,6 @@
 <script setup lang="ts">
 import { NSelect } from 'naive-ui'
 import type { SelectOption } from 'naive-ui'
-import { debounce } from 'lodash-es'
 const props = defineProps<{
   value: string
   options: SelectOption[]
@@ -20,9 +19,11 @@ const isEdit = ref(false)
 const inputValueRef = ref(props.value)
 function handleOnClick() {
   isEdit.value = true
-  inputValueRef.value = props.editValueEmpty ? '' : props.value
+  inputValueRef.value = `${props.editValueEmpty ? '' : props.value || ''}`
 }
-const handleChange = debounce(async () => {
+const handleChange = async (value) => {
+  inputValueRef.value = value
+
   if (props.value !== inputValueRef.value) {
     const isSuccess = await props.onUpdateValue(inputValueRef.value)
 
@@ -32,11 +33,9 @@ const handleChange = debounce(async () => {
   } else {
     isEdit.value = false
   }
-}, 300)
+}
 
 const showRef = computed(() => {
-  console.log('props.options', props.options)
-
   const { label } = (props.options || []).find(({ value }) => value === (props.value || '')) || {}
 
   return label || '-'

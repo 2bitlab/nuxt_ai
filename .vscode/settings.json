@@ -79,5 +79,9 @@
   "nuxtr.vueFiles.firstTag": "template",
   "nuxtr.vueFiles.script.type": "setup",
   "nuxtr.vueFiles.script.defaultLanguage": "ts",
-  "nuxtr.openItemsAfterCreation": true
+  "nuxtr.openItemsAfterCreation": true,
+
+  "github.copilot.advanced": {
+    "debug.overrideChatEngine": "gpt-4"
+  }
 }

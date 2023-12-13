@@ -99,8 +99,6 @@ const getI18nConfig = () => ({
   dataTableBalanceLogChange: '改变',
   dataTableBalanceLogChangeBefore: '改变前',
   dataTableBalanceLogRemark: '备注(remark)',
-  dataTableBalanceLogCreator: '创建者',
-  dataTableBalanceLogCreatedAt: '创建时间',
   dataTableBalanceLogTopUp: '充值',
 })
 
@@ -135,7 +133,7 @@ const {
   model: 'balanceLog',
   getI18nConfig,
 
-  getColumns: () => {
+  getColumns: (_, i18nRef) => {
     const columns: DataTableColumn<BalanceLog>[] = [
       {
         type: 'expand',
@@ -212,7 +210,7 @@ const {
         resizable: true,
       },
       {
-        title: i18nRef.dataTableBalanceLogUser,
+        title: i18nRef.dataTableCreator,
         key: 'creator',
         width: 300,
         resizable: true,
@@ -224,7 +222,7 @@ const {
         },
       },
       {
-        title: i18nRef.dataTableBalanceLogCreatedAt,
+        title: i18nRef.dataTableCreatedAt,
         key: 'createdAt',
         width: 150,
         sortOrder: 'descend' as any,

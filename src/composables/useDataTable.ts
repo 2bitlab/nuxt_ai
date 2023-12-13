@@ -24,6 +24,8 @@ type ModelType =
   | 'page'
   | 'company'
   | 'companyMember'
+  | 'role'
+  | 'userRole'
 type UpdateFunc<DataType> = (id: string, data: Partial<DataType>) => Promise<boolean>
 type CreateFormatFunc<DataType> = (
   formValueRef: UnwrapNestedRefs<Partial<DataType>>

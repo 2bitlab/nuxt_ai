@@ -20,5 +20,6 @@ import { useChat } from 'ai/vue'
 
 const { messages, input, handleSubmit } = useChat({
   headers: { 'Content-Type': 'application/json' },
+  api: '/api/ai/chat/openai',
 })
 </script>

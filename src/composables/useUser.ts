@@ -1,7 +1,6 @@
-import type { SelectOption, SelectRenderLabel, SelectRenderTag } from 'naive-ui'
 import type { User } from '@prisma/client'
-import { debounce } from 'lodash-es'
 
+import { useDataSelect } from './useDataSelect'
 import AvatarCard from '~/components/User/AvatarCard.vue'
 
 export const useUserSelect = ({
@@ -11,91 +10,50 @@ export const useUserSelect = ({
   getBefOrList?: () => Promise<any[]>
   formatWhere?: (where: any) => Promise<any>
 }) => {
-  const optionsRef = ref<(SelectOption & User)[]>([])
-  const searchLoadingRef = ref(false)
-  const handleSearch = debounce(async (query?: string) => {
-    searchLoadingRef.value = true
-
-    const orList = []
-    if (getBefOrList) {
-      const defOrList = await getBefOrList()
-      orList.push(...defOrList)
-    }
-
-    if (query) {
-      console.log('handleSearch query', query)
-      orList.push(
-        ...[
-          {
-            id: {
-              contains: query,
-            },
-          },
-          {
-            name: {
-              contains: query,
-            },
-          },
-          {
-            email: {
-              contains: query,
-            },
-          },
-        ]
-      )
-    }
-
-    if (orList.length) {
-      let where = {
-        OR: orList,
-      }
-
-      if (formatWhere) {
-        where = await formatWhere(where)
-      }
-
-      const list = await getTrpc().db.user.findMany.query({
-        take: 10,
-        where,
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          block: true,
-          deleted: true,
+  return useDataSelect<User>({
+    getBefOrList,
+    formatWhere,
+    model: 'user',
+    getQueryOrList: (query) => [
+      {
+        id: {
+          contains: query,
         },
+      },
+      {
+        name: {
+          contains: query,
+        },
+      },
+      {
+        email: {
+          contains: query,
+        },
+      },
+    ],
+    renderLabel: (option) => {
+      console.log('renderLabel option', option)
+      return h(AvatarCard, {
+        user: option,
+        round: true,
       })
-      console.log('handleSearch list', list)
-      optionsRef.value = list.map((item) => ({ ...item, label: item.name, value: item.id }))
-    } else {
-      optionsRef.value = []
-    }
-
-    searchLoadingRef.value = false
-  }, 300)
-
-  const renderLabel: SelectRenderLabel = (option) => {
-    console.log('renderLabel option', option)
-    return h(AvatarCard, {
-      user: option,
-      round: true,
-    })
-  }
-
-  const renderSingleSelectTag: SelectRenderTag = ({ option }) => {
-    console.log('renderSingleSelectTag option', option)
-    return h(AvatarCard, {
-      user: option,
-      round: true,
-    })
-  }
-
-  return {
-    optionsRef,
-    searchLoadingRef,
-    handleSearch,
-    renderLabel,
-    renderSingleSelectTag,
-  }
+    },
+    renderSingleSelectTag: ({ option }) => {
+      console.log('renderSingleSelectTag option', option)
+      return h(AvatarCard, {
+        user: option,
+        round: true,
+      })
+    },
+    getQuerySelect: () => ({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        block: true,
+        deleted: true,
+      },
+    }),
+  })
 }

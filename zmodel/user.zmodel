@@ -4,6 +4,8 @@ import "config"
 import "video"
 import "crawl"
 import "company"
+import "balance"
+import "auth"
 // https://github.com/nextauthjs/next-auth/blob/main/packages/adapter-prisma/prisma/custom.prisma
 
 
@@ -33,6 +35,7 @@ model User {
   invitee User[] @relation("InviteHistory")
 
   // 基础信息相关
+
 
   // 其他关联
 
@@ -68,6 +71,16 @@ model User {
   videoTasks VideoTask[]
 
   handleVideos VideoTask[]  @relation("VideoTaskHandler")
+
+  balnace Balnace[]
+
+	roles UserRole[]
+	permissions UserPermission[]
+
+  creatorRoles Role[] @relation("CreatorRoles")
+  creatorUserRoles UserRole[] @relation("CreatorUserRoles")
+  creatorRolePermissions RolePermission[] @relation("CreatorRolePermissions")
+  creatorUserPermissions UserPermission[] @relation("CreatorUserPermissions")
 }
 
 model Account {
@@ -114,27 +127,4 @@ model LoginLog {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([day, userId])
-}
-
-
-model BalanceLog {
-  id String @id @default(cuid())
-
-  balance Decimal @default(0) // 余额
-  change Decimal @default(0) // 变动
-  changeBefore Decimal @default(0) // 变动前余额
-
-  remark String // 备注
-  log Json? // 其他log 的信息
-
-  createdAt DateTime @default(now())
-  creatorId String?
-  creator User? @relation('BalanceLogCreator', fields: [creatorId], references: [id])
-
-  preBalanceLogId String? // 前一条历史的id
-  preBalanceLog BalanceLog? @relation('BalanceLogHistory', fields: [preBalanceLogId], references: [id])
-  balanceLogs BalanceLog[] @relation("BalanceLogHistory")
-
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

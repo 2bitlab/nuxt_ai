@@ -108,7 +108,7 @@ enum ConfigValueKey {
 }
 
 enum VideoTaskStatus {
-    WAIT_HANDL
+    WAIT_HANDEL
     PROCESSING
     WAIT_CONFIRM
     DONE
@@ -119,6 +119,11 @@ enum PageStatus {
     IS_500
     IS_200
     IS_WATING
+}
+
+enum Permission {
+    TOP_UP
+    SUPER_ADMIN
 }
 
 model User {
@@ -161,6 +166,13 @@ model User {
     videos Video[]
     videoTasks VideoTask[]
     handleVideos VideoTask[] @relation("VideoTaskHandler")
+    balnace Balnace[]
+    roles UserRole[]
+    permissions UserPermission[]
+    creatorRoles Role[] @relation("CreatorRoles")
+    creatorUserRoles UserRole[] @relation("CreatorUserRoles")
+    creatorRolePermissions RolePermission[] @relation("CreatorRolePermissions")
+    creatorUserPermissions UserPermission[] @relation("CreatorUserPermissions")
 }
 
 model Account {
@@ -203,23 +215,6 @@ model LoginLog {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([day, userId])
-}
-
-model BalanceLog {
-    id String @id() @default(cuid())
-    balance Decimal @default(0)
-    change Decimal @default(0)
-    changeBefore Decimal @default(0)
-    remark String
-    log Json?
-    createdAt DateTime @default(now())
-    creatorId String?
-    creator User? @relation("BalanceLogCreator", fields: [creatorId], references: [id])
-    preBalanceLogId String?
-    preBalanceLog BalanceLog? @relation("BalanceLogHistory", fields: [preBalanceLogId], references: [id])
-    balanceLogs BalanceLog[] @relation("BalanceLogHistory")
-    userId String
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 /// @@allow('all', auth() == creator)
@@ -516,6 +511,10 @@ model Video {
     videoTags VideoTag[]
     videoSetId String?
     videoSet VideoSet? @relation(fields: [videoSetId], references: [id])
+    price Decimal @default(0)
+    audioUrl String?
+    copywritingUrl String?
+    copywriting String?
     videoTasks VideoTask[]
 }
 
@@ -555,6 +554,8 @@ model VideoTask {
     video Video @relation(fields: [videoId], references: [id])
     handlerId String?
     handler User? @relation("VideoTaskHandler", fields: [handlerId], references: [id])
+    status VideoTaskStatus @default(WAIT_HANDEL)
+    price Decimal @default(0)
 }
 
 model Site {
@@ -602,4 +603,81 @@ model CrawlTask {
     published Boolean @default(false)
     siteId String
     site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model Balnace {
+    id String @id() @default(cuid())
+    balance Decimal @default(0)
+    lockBalance Decimal @default(0)
+    uesrId String @unique()
+    user User @relation(fields: [uesrId], references: [id], onDelete: Cascade)
+}
+
+model BalanceLog {
+    id String @id() @default(cuid())
+    balance Decimal @default(0)
+    change Decimal @default(0)
+    changeBefore Decimal @default(0)
+    remark String
+    log Json?
+    isLock Boolean @default(false)
+    createdAt DateTime @default(now())
+    creatorId String?
+    creator User? @relation("BalanceLogCreator", fields: [creatorId], references: [id])
+    preBalanceLogId String?
+    preBalanceLog BalanceLog? @relation("BalanceLogHistory", fields: [preBalanceLogId], references: [id])
+    balanceLogs BalanceLog[] @relation("BalanceLogHistory")
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Role {
+    id String @id() @default(cuid())
+    name String @unique()
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+    creator User @relation("CreatorRoles", fields: [creatorId], references: [id])
+    creatorId String
+    users UserRole[]
+    permissions RolePermission[]
+}
+
+model UserRole {
+    id String @id() @default(cuid())
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    roleId String
+    role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+    creator User @relation("CreatorUserRoles", fields: [creatorId], references: [id])
+    creatorId String
+
+    @@unique([roleId, userId])
+}
+
+model RolePermission {
+    id String @id() @default(cuid())
+    roleId String
+    role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+    permission Permission
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+    creator User @relation("CreatorRolePermissions", fields: [creatorId], references: [id])
+    creatorId String
+
+    @@unique([roleId, permission])
+}
+
+model UserPermission {
+    id String @id() @default(cuid())
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    permission Permission
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+    creator User @relation("CreatorUserPermissions", fields: [creatorId], references: [id])
+    creatorId String
+
+    @@unique([userId, permission])
 }

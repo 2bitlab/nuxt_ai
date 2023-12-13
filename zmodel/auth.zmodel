@@ -1,0 +1,74 @@
+import "user"
+
+
+enum Permission {
+  TOP_UP // 充值
+
+  SUPER_ADMIN // 超级管理员
+}
+
+model Role {
+  id String @id @default(cuid())
+  name String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  creator User @relation("CreatorRoles", fields: [creatorId], references: [id])
+  creatorId String
+
+	users UserRole[]
+	permissions RolePermission[]
+}
+
+model UserRole {
+  id String @id @default(cuid())
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  roleId String
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  creator User @relation("CreatorUserRoles", fields: [creatorId], references: [id])
+  creatorId String
+
+  @@unique([roleId, userId])
+}
+
+model RolePermission {
+  id String @id @default(cuid())
+
+  roleId String
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permission Permission
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  creator User @relation("CreatorRolePermissions", fields: [creatorId], references: [id])
+  creatorId String
+
+  @@unique([roleId, permission])
+}
+
+model UserPermission {
+  id String @id @default(cuid())
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  permission Permission
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  creator User @relation("CreatorUserPermissions", fields: [creatorId], references: [id])
+  creatorId String
+
+  @@unique([userId, permission])
+}

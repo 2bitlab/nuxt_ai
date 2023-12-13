@@ -1,7 +1,6 @@
-import type { SelectOption, SelectRenderLabel, SelectRenderTag } from 'naive-ui'
+import type { SelectOption } from 'naive-ui'
 import type { CompanyStatus, CompanyMemberRole, Company } from '@prisma/client'
 
-import { debounce } from 'lodash-es'
 import AvatarCard from '~/components/Company/AvatarCard.vue'
 
 export const useCompanyStatusI18n = () => {
@@ -86,81 +85,29 @@ export const useCompanySelect = ({
   getBefOrList?: () => Promise<any[]>
   formatWhere?: (where: any) => Promise<any>
 }) => {
-  const optionsRef = ref<(SelectOption & Company)[]>([])
-  const searchLoadingRef = ref(false)
-  const handleSearch = debounce(async (query?: string) => {
-    searchLoadingRef.value = true
+  return useDataSelect<Company>({
+    getBefOrList,
+    formatWhere,
+    model: 'company',
 
-    const orList = []
-    if (getBefOrList) {
-      const defOrList = await getBefOrList()
-      orList.push(...defOrList)
-    }
-
-    if (query) {
-      console.log('handleSearch query', query)
-      orList.push(
-        ...[
-          {
-            id: {
-              contains: query,
-            },
-          },
-          {
-            name: {
-              contains: query,
-            },
-          },
-        ]
-      )
-    }
-
-    if (orList.length) {
-      let where = {
-        OR: orList,
-      }
-
-      if (formatWhere) {
-        where = await formatWhere(where)
-      }
-
-      const list = await getTrpc().db.company.findMany.query({
-        take: 10,
-        where,
-        select: {
-          id: true,
-          name: true,
-          logo: true,
-        },
+    renderLabel: (option) => {
+      console.log('renderLabel option', option)
+      return h(AvatarCard, {
+        company: option,
       })
-      console.log('handleSearch list', list)
-      optionsRef.value = list.map((item) => ({ ...item, label: item.name, value: item.id }))
-    } else {
-      optionsRef.value = []
-    }
-
-    searchLoadingRef.value = false
-  }, 300)
-
-  const renderLabel: SelectRenderLabel = (option) => {
-    console.log('renderLabel option', option)
-    return h(AvatarCard, {
-      company: option,
-    })
-  }
-
-  const renderSingleSelectTag: SelectRenderTag = ({ option }) => {
-    console.log('renderSingleSelectTag option', option)
-    return h(AvatarCard, {
-      company: option,
-    })
-  }
-
-  return {
-    optionsRef,
-    searchLoadingRef,
-    handleSearch,
-    renderLabel,
-    renderSingleSelectTag,
-  }
+    },
+    renderSingleSelectTag: ({ option }) => {
+      console.log('renderSingleSelectTag option', option)
+      return h(AvatarCard, {
+        company: option,
+      })
+    },
+    getQuerySelect: () => ({
+      select: {
+        id: true,
+        name: true,
+        logo: true,
+      },
+    }),
+  })
 }

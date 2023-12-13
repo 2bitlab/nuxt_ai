@@ -16,7 +16,6 @@ import createAccountRouter from './Account.router'
 import createSessionRouter from './Session.router'
 import createVerificationTokenRouter from './VerificationToken.router'
 import createLoginLogRouter from './LoginLog.router'
-import createBalanceLogRouter from './BalanceLog.router'
 import createShopRouter from './Shop.router'
 import createShopMemberRouter from './ShopMember.router'
 import createProduceSpecificationRouter from './ProduceSpecification.router'
@@ -44,6 +43,12 @@ import createVideoTaskRouter from './VideoTask.router'
 import createSiteRouter from './Site.router'
 import createPageRouter from './Page.router'
 import createCrawlTaskRouter from './CrawlTask.router'
+import createBalnaceRouter from './Balnace.router'
+import createBalanceLogRouter from './BalanceLog.router'
+import createRoleRouter from './Role.router'
+import createUserRoleRouter from './UserRole.router'
+import createRolePermissionRouter from './RolePermission.router'
+import createUserPermissionRouter from './UserPermission.router'
 
 export { PrismaClient } from '@prisma/client'
 
@@ -106,7 +111,6 @@ export function createRouter<Router extends RouterFactory<BaseConfig>, Proc exte
     session: createSessionRouter<Router, Proc>(router, procedure),
     verificationToken: createVerificationTokenRouter<Router, Proc>(router, procedure),
     loginLog: createLoginLogRouter<Router, Proc>(router, procedure),
-    balanceLog: createBalanceLogRouter<Router, Proc>(router, procedure),
     shop: createShopRouter<Router, Proc>(router, procedure),
     shopMember: createShopMemberRouter<Router, Proc>(router, procedure),
     produceSpecification: createProduceSpecificationRouter<Router, Proc>(router, procedure),
@@ -134,5 +138,11 @@ export function createRouter<Router extends RouterFactory<BaseConfig>, Proc exte
     site: createSiteRouter<Router, Proc>(router, procedure),
     page: createPageRouter<Router, Proc>(router, procedure),
     crawlTask: createCrawlTaskRouter<Router, Proc>(router, procedure),
+    balnace: createBalnaceRouter<Router, Proc>(router, procedure),
+    balanceLog: createBalanceLogRouter<Router, Proc>(router, procedure),
+    role: createRoleRouter<Router, Proc>(router, procedure),
+    userRole: createUserRoleRouter<Router, Proc>(router, procedure),
+    rolePermission: createRolePermissionRouter<Router, Proc>(router, procedure),
+    userPermission: createUserPermissionRouter<Router, Proc>(router, procedure),
   })
 }

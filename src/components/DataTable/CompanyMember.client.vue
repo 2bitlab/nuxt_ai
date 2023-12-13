@@ -123,7 +123,6 @@ import {
   NSelect,
 } from 'naive-ui'
 import type { DataTableColumn, FormRules } from 'naive-ui'
-import { debounce } from 'lodash-es'
 import type { CompanyMember, CompanyMemberRole as CompanyMemberRoleType } from '@prisma/client'
 import { CompanyMemberRole } from '@prisma/client'
 import { useUrlSearchParams } from '@vueuse/core'
@@ -147,8 +146,6 @@ type I18nType = ReturnType<typeof getI18nConfig>
 const { mapRef: memberRoleMapRef, optionsRef: memberRoleOptionsRef } = useCompanyMemberRoleOptions()
 
 const query = useUrlSearchParams('history')
-
-const rangeCreatedAtRef = ref(null)
 
 const groupRoleWhereRef = ref({})
 
@@ -281,7 +278,14 @@ const {
         {
           required: true,
           trigger: 'blur',
-          message: evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableConfigValueKey }),
+          message: evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableCompanyMemberUserId }),
+        },
+      ],
+      companyId: [
+        {
+          required: true,
+          trigger: 'blur',
+          message: evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableCompanyMemberCompanyId }),
         },
       ],
     }
@@ -311,6 +315,7 @@ const {
           select: {
             name: true,
             image: true,
+            email: true,
           },
         },
       },
@@ -318,36 +323,7 @@ const {
   },
 })
 
-watch(
-  () => rangeCreatedAtRef.value,
-  debounce((newValue) => {
-    const { where } = whereRef.value
-    console.log('rangeCreatedAtRef newValue', newValue)
-
-    const [start, end] = newValue || []
-
-    console.log('rangeCreatedAtRef newValue start', start, 'end', end)
-
-    let newWhere = {
-      createdAt: undefined,
-    }
-    if (start && end) {
-      newWhere = {
-        createdAt: {
-          gte: new Date(start),
-          lt: new Date(end),
-        },
-      }
-    }
-
-    whereRef.value = {
-      where: {
-        ...where,
-        ...newWhere,
-      },
-    }
-  }, 300)
-)
+const { rangeCreatedAtRef } = useCreatedAtSelect(whereRef)
 
 const {
   optionsRef: userOptionsRef,
@@ -383,6 +359,9 @@ watch(
 
     formValueRef.userId = newValue as string
     userHandleSearch()
+  },
+  {
+    immediate: true,
   }
 )
 
@@ -420,6 +399,9 @@ watch(
 
     formValueRef.companyId = newValue as string
     companyHandleSearch()
+  },
+  {
+    immediate: true,
   }
 )
 

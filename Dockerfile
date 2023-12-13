@@ -7,7 +7,7 @@ RUN npm install -g pnpm
 FROM base as build
 COPY . .
 # COPY ./.env.production.local ./.env
-RUN pnpm install
+RUN pnpm install --production=false
 RUN pnpm build
 
 FROM base as prod

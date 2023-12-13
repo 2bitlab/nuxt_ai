@@ -124,6 +124,8 @@ const {
   }
 )
 
+const router = useRouter()
+
 const {
   paginationReactive,
   loadingRef,
@@ -210,6 +212,23 @@ const {
         key: '_count.companyMembers',
         width: 150,
         resizable: true,
+        render: (row) => {
+          return h(
+            'div',
+            {
+              class: 'cursor-pointer underline',
+              onClick: () => {
+                router.push({
+                  path: '/lab/companyMembers',
+                  query: {
+                    companyId: row.id,
+                  },
+                })
+              },
+            },
+            row._count.companyMembers
+          )
+        },
       },
       {
         title: i18nRef.dataTableCompanyCreatedAt,
@@ -317,36 +336,5 @@ watch(
   }, 300)
 )
 
-const rangeCreatedAtRef = ref(null)
-
-watch(
-  () => rangeCreatedAtRef.value,
-  debounce((newValue) => {
-    const { where } = whereRef.value
-    console.log('rangeCreatedAtRef newValue', newValue)
-
-    const [start, end] = newValue || []
-
-    console.log('rangeCreatedAtRef newValue start', start, 'end', end)
-
-    let newWhere = {
-      createdAt: undefined,
-    }
-    if (start && end) {
-      newWhere = {
-        createdAt: {
-          gte: new Date(start),
-          lt: new Date(end),
-        },
-      }
-    }
-
-    whereRef.value = {
-      where: {
-        ...where,
-        ...newWhere,
-      },
-    }
-  }, 300)
-)
+const { rangeCreatedAtRef } = useCreatedAtSelect(whereRef)
 </script>
