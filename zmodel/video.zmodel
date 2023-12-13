@@ -5,8 +5,10 @@ import "user"
 model Video extends Base {
   url String
   title String // 标题
-  summary String // 简介
+  summary String @db.Text // 简介
   coverUrl String // 封面地址
+
+  mulQualityVideos Json
 
   publishedAt DateTime @default(now())
 
@@ -17,6 +19,8 @@ model Video extends Base {
 
   videoSetId String?
   videoSet VideoSet? @relation(fields: [videoSetId], references: [id])
+
+  videoTasks VideoTask[]
 }
 
 model VideoType {
@@ -42,4 +46,22 @@ model VideoSet {
   label String
 
   videos Video[]
+}
+
+
+
+enum VideoTaskStatus {
+  WAIT_HANDL // 等接单
+  PROCESSING // 已接单，处理中
+  WAIT_CONFIRM // 已处理，等确认
+  DONE // 已确认
+}
+
+model VideoTask extends Base {
+
+  videoId String
+  video Video @relation(fields: [videoId], references: [id])
+
+  handlerId String?
+  handler User? @relation("VideoTaskHandler", fields: [handlerId], references: [id])
 }

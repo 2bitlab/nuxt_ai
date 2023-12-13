@@ -2,9 +2,9 @@ import { env } from './src/env'
 
 const baseBuildTranspileList = [
   'bcryptjs',
+  'trpc-nuxt',
   'qcloud-cos-sts',
   '@juggle/resize-observer',
-  'next-auth/providers',
   // '@vueuse/nuxt',
 ]
 
@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     strict: false,
   },
   modules: [
-    '@sidebase/nuxt-auth', // https://nuxt.com/modules/nuxt-auth
+    '@hebilicious/authjs-nuxt',
     '@nuxtjs/tailwindcss',
     // 'nuxt-lodash', // https://nuxt.com/modules/lodash
     'nuxt-icon', // https://github.com/nuxt-modules/icon
@@ -51,6 +51,31 @@ export default defineNuxtConfig({
   //   defaultLocale: 'zh-cn',
   //   defaultTimezone: 'Asia/Shanghai',
   // },
+  alias: {
+    cookie: 'cookie',
+  },
 
-  auth: { origin: env.NEXTAUTH_URL },
+  runtimeConfig: {
+    authJs: {
+      secret: env.JWT_SECRET || 'test', // You can generate one with `openssl rand -base64 32`
+    },
+    public: {
+      authJs: {
+        baseUrl: env.NEXTAUTH_URL || 'http://localhost:3000', // The URL of your deployed app (used for origin Check in production)
+        verifyClientOnEveryRequest: true, // whether to hit the /auth/session endpoint on every client request
+      },
+    },
+  },
+
+  tailwindcss: {
+    config: {
+      content: ['./**/*.{vue}'],
+      corePlugins: {
+        preflight: false,
+      },
+      experimental: {
+        templateInterpolation: true,
+      },
+    },
+  },
 })

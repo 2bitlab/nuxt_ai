@@ -273,7 +273,7 @@ export const cosVideoTranscodeTask = async ({
   const templateId = videoCodeMap[type] || videoCodeMap.p640
 
   const outputFilePath = `data/${uuid}/${uuidv4()}__transcode${type}`
-  const outputUrl = `${host}/${outputFilePath}`
+  const outputUrl = `${host}/${outputFilePath}.m3u8`
 
   // https://cloud.tencent.com/document/product/460/84790
   const data = await cosCi(

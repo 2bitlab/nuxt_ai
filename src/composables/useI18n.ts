@@ -2,6 +2,8 @@ import { zhCN, dateZhCN, enUS, dateEnUS } from 'naive-ui'
 import type { NLocale, NDateLocale } from 'naive-ui'
 import type { I18nValue } from '@prisma/client'
 import { useStorage } from '@vueuse/core'
+import { merge } from 'lodash-es'
+
 interface I18nConfig {
   [lang: string]: Record<string, string>
 }
@@ -91,7 +93,7 @@ export const useI18n = <T extends Record<string, string>>(i18nConfig: T) => {
   const currentI18nRef = useCurrentI18n()
 
   const defaultI18n = i18nConfigMap[defaultLang] || {}
-  i18nConfigMap[defaultLang] = useMerge(defaultI18n, i18nConfig)
+  i18nConfigMap[defaultLang] = merge(defaultI18n, i18nConfig)
 
   const keys = Object.keys(i18nConfig)
 

@@ -14,9 +14,8 @@ const config = {
     'no-template-curly-in-string': 'off',
     'require-await': 'off',
     'n/no-callback-literal': 'off',
-    'vue/no-multiple-template-root': 'off'
+    'vue/no-multiple-template-root': 'off',
   },
 }
-
 
 module.exports = config

@@ -1,11 +1,8 @@
-export const useCurrentUser = () => {
-  const { data } = useSession()
-
-  const userRef = computed(() => {
-    const { user } = data.value || {}
-
-    return user
+export const useCurrentUserId = () => {
+  const { user } = useAuth()
+  const userIdRef = computed(() => {
+    return user.value?.id
   })
 
-  return userRef
+  return userIdRef
 }

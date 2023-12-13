@@ -1,9 +1,7 @@
 <template>
-  <div>Nuxt Basic Example</div>
+  <VideoList />
 </template>
 
 <script lang="ts" setup>
-// const ui = /* ui */ {
-//   background: 'bg-white dark:bg-slate-900',
-// }
+definePageMeta({ middleware: 'auth', auth: { guestRedirectTo: '/signin' } })
 </script>

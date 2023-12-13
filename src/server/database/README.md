@@ -43,3 +43,5 @@ $ prisma format
 [zenstackhq](https://zenstack.dev)
 
 [sample-multiple-schema](https://github.dev/zenstackhq/sample-multiple-schema)
+
+[sample-todo-trpc](https://github.dev/zenstackhq/sample-todo-trpc)

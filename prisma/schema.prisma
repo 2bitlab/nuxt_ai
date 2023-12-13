@@ -87,11 +87,31 @@ enum CurrencyType {
     CNY
 }
 
+enum CompanyStatus {
+    VERIFIED
+    WAIT_CERTIFIED
+    REVIEW
+    LOGGED_OUT
+}
+
+enum CompanyMemberRole {
+    OWNER
+    ADMIN
+    MEMBER
+}
+
 enum ConfigValueKey {
     TENCENT_COS_SECRET
     TENCENT_COS_UPLOAD
     TENCENT_VECTOR_DB
     OPENAI_API_KEY
+}
+
+enum VideoTaskStatus {
+    WAIT_HANDL
+    PROCESSING
+    WAIT_CONFIRM
+    DONE
 }
 
 enum PageStatus {
@@ -120,6 +140,12 @@ model User {
     inviterId String?
     inviter User? @relation("InviteHistory", fields: [inviterId], references: [id])
     invitee User[] @relation("InviteHistory")
+    currentCompanyId String?
+    company Company? @relation("ActiveCompanyUser", fields: [currentCompanyId], references: [id])
+    currentShopId String?
+    shop Shop? @relation("ActiveShopUser", fields: [currentShopId], references: [id])
+    companys Company[]
+    companyMembers CompanyMember[]
     shops Shop[]
     producs Produce[]
     produceSpecifications ProduceSpecification[]
@@ -133,6 +159,8 @@ model User {
     creatorBalanceLogs BalanceLog[] @relation("BalanceLogCreator")
     crawlTasks CrawlTask[]
     videos Video[]
+    videoTasks VideoTask[]
+    handleVideos VideoTask[] @relation("VideoTaskHandler")
 }
 
 model Account {
@@ -208,18 +236,22 @@ model Shop {
     name String
     logo String?
     status ShowStatus @default(DRAFT)
+    companyId String
+    company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
     producs Produce[]
     shopMember ShopMember[]
+    activeUsers User[] @relation("ActiveShopUser")
 }
 
 model ShopMember {
-    role ShopMemberRole
+    id String @id() @default(cuid())
+    role ShopMemberRole @default(SALER)
     shopId String
     shop Shop @relation(fields: [shopId], references: [id], onDelete: Cascade)
     userId String
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@id([shopId, userId])
+    @@unique([shopId, userId])
 }
 
 /// @@allow('all', auth() == creator)
@@ -399,6 +431,38 @@ model PhysicalProduce {
     expressFeeRule ExpressFeeRule @relation(fields: [expressFeeRuleId], references: [id], onDelete: Cascade)
 }
 
+model CompanyMember {
+    id String @id() @default(cuid())
+    role CompanyMemberRole @default(MEMBER)
+    companyId String
+    company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+
+    @@unique([companyId, userId])
+}
+
+/// @@allow('all', auth() == creator)
+/// @@allow('read', auth() != null && published)
+model Company {
+    id String @id() @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+    deletedAt DateTime?
+    creator User? @relation(fields: [creatorId], references: [id])
+    creatorId String?
+    deleted Boolean @default(false)
+    published Boolean @default(false)
+    name String @unique()
+    logo String?
+    status CompanyStatus @default(WAIT_CERTIFIED)
+    companyMembers CompanyMember[]
+    shops Shop[]
+    activeUsers User[] @relation("ActiveCompanyUser")
+}
+
 /// @@allow('all', auth() == creator)
 /// @@allow('read', auth() != null && published)
 model I18nValue {
@@ -443,14 +507,16 @@ model Video {
     published Boolean @default(false)
     url String
     title String
-    summary String
+    summary String @db.Text()
     coverUrl String
+    mulQualityVideos Json
     publishedAt DateTime @default(now())
     videoTypeId String
     videoType VideoType @relation(fields: [videoTypeId], references: [id], onDelete: Cascade)
     videoTags VideoTag[]
     videoSetId String?
     videoSet VideoSet? @relation(fields: [videoSetId], references: [id])
+    videoTasks VideoTask[]
 }
 
 model VideoType {
@@ -472,6 +538,23 @@ model VideoSet {
     id String @id() @default(cuid())
     label String
     videos Video[]
+}
+
+/// @@allow('all', auth() == creator)
+/// @@allow('read', auth() != null && published)
+model VideoTask {
+    id String @id() @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt()
+    deletedAt DateTime?
+    creator User? @relation(fields: [creatorId], references: [id])
+    creatorId String?
+    deleted Boolean @default(false)
+    published Boolean @default(false)
+    videoId String
+    video Video @relation(fields: [videoId], references: [id])
+    handlerId String?
+    handler User? @relation("VideoTaskHandler", fields: [handlerId], references: [id])
 }
 
 model Site {
