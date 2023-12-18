@@ -68,11 +68,11 @@ model User {
   crawlTasks CrawlTask[]
 
   videos Video[]
-  videoTasks VideoTask[]
+  videoOrders VideoOrder[]
 
-  handleVideos VideoTask[]  @relation("VideoTaskHandler")
+  handleVideoOrders VideoOrder[]  @relation("VideoTaskHandler")
 
-  balnace Balnace[]
+  balnace Balance[]
 
 	roles UserRole[]
 	permissions UserPermission[]

@@ -159,7 +159,7 @@ const {
 } = useDataTable<Page, I18nType>({
   model: 'page',
   getI18nConfig: getPageI18nConfig,
-  getColumns: (_, i18nTableRef) => {
+  getColumns: ({ i18nRef: i18nTableRef }) => {
     const columns: DataTableColumn<Page>[] = [
       {
         title: i18nTableRef.crawlerPagePageTableUrl,

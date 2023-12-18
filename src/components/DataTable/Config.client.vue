@@ -115,7 +115,7 @@ const {
 } = useDataTable<ConfigValue, I18nType>({
   model: 'configValue',
   getI18nConfig,
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<ConfigValue>[] = [
       {
         type: 'expand',

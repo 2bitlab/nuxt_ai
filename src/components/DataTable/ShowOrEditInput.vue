@@ -8,7 +8,7 @@
       @change="handleChange"
       @blur="handleChange"
     />
-    <div v-else class="cursor-pointer">{{ value }}</div>
+    <div v-else class="cursor-pointer">{{ value || '-' }}</div>
   </div>
 </template>
 

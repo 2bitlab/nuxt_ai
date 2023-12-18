@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { publicProcedure, router } from '../trpc'
+import { publicProcedure, router, protectedProcedure } from '../trpc'
 import { getRedis } from '~/server/database/getRedis'
 
 export const appRouter = router({
@@ -16,7 +16,7 @@ export const appRouter = router({
 
       return redis.get(key)
     }),
-  set: publicProcedure
+  set: protectedProcedure
     .input(
       z.object({
         key: z.string(),

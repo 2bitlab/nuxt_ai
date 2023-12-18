@@ -26,6 +26,7 @@ type ModelType =
   | 'companyMember'
   | 'role'
   | 'userRole'
+  | 'videoOrder'
 type UpdateFunc<DataType> = (id: string, data: Partial<DataType>) => Promise<boolean>
 type CreateFormatFunc<DataType> = (
   formValueRef: UnwrapNestedRefs<Partial<DataType>>
@@ -36,39 +37,58 @@ type OrderType = 'desc' | 'asc'
 type ActionFunc = () => Promise<void>
 type InitOrderByFunc = () => Record<string, OrderType>[]
 
-export const useDataTable = <DataType extends { id: string }, I18nType>({
-  model,
-  getStatusLoading,
+type I18nConfigForFunc<I18nType> = {
+  getI18nConfig?: () => I18nType
+  i18nRef?: UnwrapNestedRefs<DataTableI18nType & I18nType>
+}
+
+type GetColumnsFunc<DataType, I18nType> = (props: {
+  update: UpdateFunc<DataType>
+  i18nRef: UnwrapNestedRefs<DataTableI18nType & I18nType>
+  refresh: () => void
+  loadingRef: Ref<boolean>
+}) => DataTableColumn<DataType>[]
+
+export const useDataI18n = <I18nType>({
   getI18nConfig: getNewI18nConfig,
-  getColumns,
-  refresh: otherRefresh,
-  getRules = () => ({}),
-  getDefFormData = () => ({}),
-  getSelectForList,
-  createFormat = async (v) => v,
-  initOrderBy = () => [],
-}: {
-  model: ModelType
-  getI18nConfig: () => I18nType
-  getColumns: (
-    updateFunc: UpdateFunc<DataType>,
-    i18nRef: UnwrapNestedRefs<DataTableI18nType & I18nType>
-  ) => DataTableColumn<DataType>[]
-  getRules?: (i18nRef: UnwrapNestedRefs<DataTableI18nType & I18nType>) => FormRules
-  getDefFormData?: () => Partial<DataType>
-  refresh?: () => void
-  getStatusLoading?: (statusLoading: boolean) => boolean
-  getSelectForList?: () => { select?: Record<string, any> }
-  createFormat?: CreateFormatFunc<DataType>
-  initOrderBy?: InitOrderByFunc
-}) => {
+  i18nRef: orgI18nRef,
+}: I18nConfigForFunc<I18nType>) => {
+  if (getNewI18nConfig) {
+    const getI18nConfig = () =>
+      ({
+        ...getDataTableI18nConfig(),
+        ...getNewI18nConfig(),
+      }) as DataTableI18nType & I18nType
+
+    const { i18nRef } = useI18n(getI18nConfig())
+
+    return i18nRef
+  } else if (orgI18nRef) {
+    return orgI18nRef
+  }
+
   const getI18nConfig = () =>
     ({
       ...getDataTableI18nConfig(),
-      ...getNewI18nConfig(),
     }) as DataTableI18nType & I18nType
 
   const { i18nRef } = useI18n(getI18nConfig())
+
+  return i18nRef
+}
+
+export const useDataList = <DataType extends { id: string }, I18nType>(
+  props: {
+    model: ModelType
+    getColumns: GetColumnsFunc
+    refresh?: () => void
+    getStatusLoading?: (statusLoading: boolean) => boolean
+    getSelectForList?: () => { select?: Record<string, any> }
+    initOrderBy?: InitOrderByFunc
+  } & I18nConfigForFunc<I18nType>
+) => {
+  const { model, getStatusLoading, getColumns, refresh: otherRefresh, getSelectForList, initOrderBy = () => [] } = props
+  const i18nRef = useDataI18n<I18nType>(props)
 
   const whereRef = ref({
     where: {},
@@ -258,7 +278,160 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
   }
 
   const columnsRef = computed(() => {
-    return getColumns(update, i18nRef)
+    return getColumns({
+      update,
+      i18nRef,
+      refresh,
+      loadingRef,
+    })
+  })
+
+  return {
+    paginationReactive,
+    loadingRef,
+    listWhereRef,
+    whereRef,
+    countRef,
+    countStatusRef,
+    listStatusRef,
+    listRef: listRef as Ref<DataType[]>,
+    statusLoadingRef,
+    i18nRef,
+    columnsRef,
+    message,
+    handleSorterChange,
+    handleFiltersChange,
+    countRefresh,
+    listRefresh,
+    refresh,
+    update,
+  }
+}
+
+export const useDataForm = <DataType extends { id: string }, I18nType>(
+  props: {
+    model: ModelType
+    loadingRef: Ref<boolean>
+    getRules?: (i18nRef: UnwrapNestedRefs<DataTableI18nType & I18nType>) => FormRules
+    getDefFormData?: () => Partial<DataType>
+    refresh: () => void
+    createFormat?: CreateFormatFunc<DataType>
+    create?: (form: Partial<DataType> | UnwrapNestedRefs<Partial<DataType>>) => Promise<void>
+  } & I18nConfigForFunc<I18nType>
+) => {
+  const {
+    model,
+    loadingRef,
+    refresh,
+    getRules = () => ({}),
+    getDefFormData = () => ({}),
+    createFormat = async (v) => v,
+    create,
+  } = props
+
+  const i18nRef = useDataI18n<I18nType>(props)
+
+  const addDrawerShowRef = ref(false)
+
+  const formRef = ref<FormInst | null>()
+  const formValueRef = reactive<Partial<DataType>>(getDefFormData())
+
+  const rulesRef = computed(() => {
+    return getRules(i18nRef)
+  })
+  const message = useMessage()
+  const handleSaveButtonClick = async (e: MouseEvent) => {
+    e.preventDefault()
+
+    await formRef.value?.validate()
+
+    loadingRef.value = true
+    try {
+      const data = await createFormat(formValueRef)
+
+      if (create) {
+        await create(data)
+      } else {
+        await getTrpc().db[model].create.mutate({
+          data,
+        })
+      }
+      refresh()
+      message.success(i18nRef.dataTableSaveSuccessTips)
+
+      addDrawerShowRef.value = false
+    } catch (error) {
+      console.error('error', error)
+      loadingRef.value = false
+
+      message.error(i18nRef.dataTableSaveErrorTips)
+    }
+  }
+
+  return {
+    rulesRef,
+    formValueRef,
+    addDrawerShowRef,
+    formRef,
+    handleSaveButtonClick,
+  }
+}
+
+export const useDataTable = <DataType extends { id: string }, I18nType>(
+  props: {
+    model: ModelType
+    getColumns: GetColumnsFunc
+    getRules?: (i18nRef: UnwrapNestedRefs<DataTableI18nType & I18nType>) => FormRules
+    getDefFormData?: () => Partial<DataType>
+    refresh?: () => void
+    getStatusLoading?: (statusLoading: boolean) => boolean
+    getSelectForList?: () => { select?: Record<string, any> }
+    createFormat?: CreateFormatFunc<DataType>
+    initOrderBy?: InitOrderByFunc
+    create?: (form: Partial<DataType> | UnwrapNestedRefs<Partial<DataType>>) => Promise<void>
+  } & I18nConfigForFunc<I18nType>
+) => {
+  const {
+    model,
+    getStatusLoading,
+    getColumns,
+    refresh: otherRefresh,
+    getRules = () => ({}),
+    getDefFormData = () => ({}),
+    getSelectForList,
+    createFormat = async (v) => v,
+    initOrderBy = () => [],
+    create,
+  } = props
+
+  const i18nRef = useDataI18n<I18nType>(props)
+
+  const {
+    paginationReactive,
+    loadingRef,
+    listWhereRef,
+    whereRef,
+    countRef,
+    countStatusRef,
+    listStatusRef,
+    listRef,
+    statusLoadingRef,
+    columnsRef,
+    message,
+    handleSorterChange,
+    handleFiltersChange,
+    countRefresh,
+    listRefresh,
+    refresh,
+    update,
+  } = useDataList<DataType, I18nType>({
+    model,
+    getStatusLoading,
+    getColumns,
+    refresh: otherRefresh,
+    getSelectForList,
+    initOrderBy,
+    i18nRef,
   })
 
   /**
@@ -338,39 +511,16 @@ export const useDataTable = <DataType extends { id: string }, I18nType>({
    * Drawer
    * =======================================================
    */
-
-  const addDrawerShowRef = ref(false)
-
-  const formRef = ref<FormInst | null>()
-  const formValueRef = reactive<Partial<DataType>>(getDefFormData())
-
-  const rulesRef = computed(() => {
-    return getRules(i18nRef)
+  const { rulesRef, formValueRef, addDrawerShowRef, formRef, handleSaveButtonClick } = useDataForm({
+    model,
+    loadingRef,
+    i18nRef,
+    refresh,
+    getRules,
+    getDefFormData,
+    createFormat,
+    create,
   })
-
-  const handleSaveButtonClick = async (e: MouseEvent) => {
-    e.preventDefault()
-
-    await formRef.value?.validate()
-
-    loadingRef.value = true
-    try {
-      const data = await createFormat(formValueRef)
-
-      await getTrpc().db[model].create.mutate({
-        data,
-      })
-      refresh()
-      message.success(i18nRef.dataTableSaveSuccessTips)
-
-      addDrawerShowRef.value = false
-    } catch (error) {
-      console.error('error', error)
-      loadingRef.value = false
-
-      message.error(i18nRef.dataTableSaveErrorTips)
-    }
-  }
 
   return {
     paginationReactive,

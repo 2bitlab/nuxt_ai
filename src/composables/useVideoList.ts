@@ -1,6 +1,6 @@
-import type { VideoType } from '@prisma/client'
+import type { VideoType, VideoOrderStatus } from '@prisma/client'
 
-import { useMessage } from 'naive-ui'
+import { useMessage, useDialog } from 'naive-ui'
 
 import { useUrlSearchParams, useToggle } from '@vueuse/core'
 
@@ -20,6 +20,15 @@ export const useVideoList = () => {
     useVideoListVideoEdit: '修改',
     useVideoListVideoRemove: '删除',
     useVideoListVideoRemoveConfirm: '确定删除？',
+
+    useVideoListVideoOrderAdd: '一键同款',
+    useVideoListVideoOrderWaitHandel: '派单中',
+    useVideoListVideoOrderProcessing: '精心制作中',
+    useVideoListVideoOrderWaitConfirm: '已经做好了，快去看看吧',
+
+    useVideoListVideoOrderAddTitle: '确定下单？',
+    useVideoListVideoOrderAddContent: '本视频需要支付${price}元',
+    useVideoListVideoOrderAddConfirmBtn: '确认',
   })
 
   const { i18nRef } = useI18n(getI18nConfig())
@@ -76,21 +85,27 @@ export const useVideoList = () => {
       select: {
         id: true,
         summary: true,
+        title: true,
         coverUrl: true,
         mulQualityVideos: true,
+        price: true,
         videoTags: {
           select: {
             label: true,
           },
         },
-        videoTasks: {
+        videoOrders: {
           select: {
             id: true,
             status: true,
           },
           where: {
-            userId: currentUserIdRef.value,
+            creatorId: currentUserIdRef.value,
           },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
         },
       },
     }
@@ -368,12 +383,85 @@ export const useVideoList = () => {
     }
   }
 
-  // const addOrder = async () => {}
+  const orderStatusRef = computed(() => {
+    const video = selectedVideoRef.value
+    const { videoOrders } = video || {}
+    const [first] = videoOrders || []
+    const { status } = first || {}
+    return status || 'CANCEL'
+  })
+
+  const orderStatusBtnTextRef = computed(() => {
+    const map: Record<VideoOrderStatus, string> = {
+      WAIT_HANDEL: i18nRef.useVideoListVideoOrderWaitHandel, // 等接单
+      PROCESSING: i18nRef.useVideoListVideoOrderProcessing, // 已接单，处理中
+      WAIT_CONFIRM: i18nRef.useVideoListVideoOrderWaitConfirm, // 已处理，等确认
+      DONE: i18nRef.useVideoListVideoOrderWaitConfirm, // 已确认
+      CANCEL: i18nRef.useVideoListVideoOrderAdd,
+    }
+
+    return map[orderStatusRef.value]
+  })
+
+  const pay = async () => {
+    const price = Number(selectedVideoRef.value?.price)
+
+    try {
+      const { balanceLog } = await getTrpc().balance.pay.mutate({
+        price,
+        remark: `购买视频《${selectedVideoRef.value?.title}》`,
+        log: JSON.stringify(selectedVideoRef.value),
+      })
+
+      await getTrpc().db.videoOrder.create.mutate({
+        data: {
+          videoId: selectedVideoRef.value?.id,
+          price,
+          status: 'WAIT_HANDEL',
+          creatorId: currentUserIdRef.value,
+          balanceLogId: balanceLog.id,
+        },
+      })
+
+      await videoListRefresh()
+    } catch (error) {
+      console.error('error', error)
+      message.error(error)
+    }
+  }
+
+  const dialog = useDialog()
+  const addOrder = () => {
+    const d = dialog.warning({
+      title: i18nRef.useVideoListVideoOrderAddTitle,
+      content: evaluate(i18nRef.useVideoListVideoOrderAddContent, {
+        price: selectedVideoRef.value?.price,
+      }),
+      positiveText: i18nRef.useVideoListVideoOrderAddConfirmBtn,
+      onPositiveClick: () => {
+        d.loading = true
+        return new Promise((resolve) => {
+          pay().then(resolve)
+        })
+      },
+    })
+  }
+
+  const isListEmptyRef = computed(() => {
+    return !videoListRef.value?.length && !videoListPendingRef.value
+  })
+
+  const gotoOrderPage = () => {
+    router.push({
+      path: '/my/videoOrders',
+    })
+  }
 
   return {
     i18nRef,
 
     videoListRef,
+    isListEmptyRef,
     videoListRefresh,
     videoListPendingRef,
 
@@ -401,6 +489,8 @@ export const useVideoList = () => {
     showNextVideoBtnRef,
     showPrevVideoBtnRef,
     summaryMoreRef,
+    orderStatusRef,
+    orderStatusBtnTextRef,
     summaryMoreToggle,
     selectVideo,
     closeVideoPlayer,
@@ -408,5 +498,7 @@ export const useVideoList = () => {
     playPrevVideo,
     removeVideo,
     editVideo,
+    addOrder,
+    gotoOrderPage,
   }
 }

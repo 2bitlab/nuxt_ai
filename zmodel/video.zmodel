@@ -1,6 +1,6 @@
 import "base"
 import "user"
-
+import "balance"
 
 model Video extends Base {
   url String
@@ -27,7 +27,7 @@ model Video extends Base {
   copywriting String? // 文案
 
   // 相关
-  videoTasks VideoTask[]
+  videoOrders VideoOrder[]
 }
 
 model VideoType {
@@ -56,15 +56,15 @@ model VideoSet {
 }
 
 
-
-enum VideoTaskStatus {
+enum VideoOrderStatus {
   WAIT_HANDEL // 等接单
   PROCESSING // 已接单，处理中
   WAIT_CONFIRM // 已处理，等确认
   DONE // 已确认
+  CANCEL // 已取消
 }
 
-model VideoTask extends Base {
+model VideoOrder extends Base {
 
   videoId String
   video Video @relation(fields: [videoId], references: [id])
@@ -73,7 +73,11 @@ model VideoTask extends Base {
   handler User? @relation("VideoTaskHandler", fields: [handlerId], references: [id])
 
 
-  status VideoTaskStatus @default(WAIT_HANDEL)
+  status VideoOrderStatus @default(WAIT_HANDEL)
 
   price Decimal @default(0)
+
+  balanceLogId String @unique
+  balanceLog BalanceLog @relation(fields: [balanceLogId], references: [id])
+
 }

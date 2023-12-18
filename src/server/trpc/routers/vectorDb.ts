@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { publicProcedure, router } from '../trpc'
+import { publicProcedure, protectedProcedure, router } from '../trpc'
 import { getVectorDb } from '~/server/database'
 
 export const appRouter = router({
@@ -14,7 +14,7 @@ export const appRouter = router({
 
       return databases || []
     }),
-    create: publicProcedure
+    create: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -24,7 +24,7 @@ export const appRouter = router({
         const { database } = input || {}
         return await getVectorDb().createDatabase(database)
       }),
-    drop: publicProcedure
+    drop: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -53,7 +53,7 @@ export const appRouter = router({
 
         return collections || []
       }),
-    create: publicProcedure
+    create: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -95,7 +95,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         return await getVectorDb().createCollection(input as any)
       }),
-    drop: publicProcedure
+    drop: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -109,7 +109,7 @@ export const appRouter = router({
           collection,
         })
       }),
-    truncate: publicProcedure
+    truncate: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -123,7 +123,7 @@ export const appRouter = router({
           collection,
         })
       }),
-    describe: publicProcedure
+    describe: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -189,7 +189,7 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await getVectorDb().searchDocument(input as any)
       }),
-    delete: publicProcedure
+    delete: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -203,7 +203,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         return await getVectorDb().deleteDocument(input as any)
       }),
-    upsert: publicProcedure
+    upsert: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -215,7 +215,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         return await getVectorDb().upsertDocument(input as any)
       }),
-    update: publicProcedure
+    update: protectedProcedure
       .input(
         z.object({
           database: z.string(),
@@ -232,7 +232,7 @@ export const appRouter = router({
       }),
   }),
   index: router({
-    rebuild: publicProcedure
+    rebuild: protectedProcedure
       .input(
         z.object({
           database: z.string(),

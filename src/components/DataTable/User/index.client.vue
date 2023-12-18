@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="container mx-auto flex flex-col gap-2 p-4">
     <div class="flex items-end justify-between gap-5">
       <div>
         <div>
@@ -149,7 +149,7 @@ const {
   model: 'user',
   getI18nConfig,
 
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<User>[] = [
       {
         type: 'expand',

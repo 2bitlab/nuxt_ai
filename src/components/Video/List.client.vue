@@ -40,25 +40,28 @@
     </div>
     <div class="flex gap-4">
       <div class="flex-1 overflow-hidden">
-        <div class="overflow-y-auto">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <NCard v-for="video in videoListRef" :key="video.id" hoverable @click="() => selectVideo(video.id)">
-              <template #cover>
-                <div class="aspect-[266/357] cursor-pointer overflow-hidden">
-                  <img :src="video.coverUrl" class="transform transition duration-300 hover:scale-110" />
+        <NSpin :show="videoListPendingRef">
+          <NEmpty v-if="isListEmptyRef" />
+          <div v-else class="overflow-y-auto">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <NCard v-for="video in videoListRef" :key="video.id" hoverable @click="() => selectVideo(video.id)">
+                <template #cover>
+                  <div class="aspect-[266/357] cursor-pointer overflow-hidden">
+                    <img :src="video.coverUrl" class="transform transition duration-300 hover:scale-110" />
+                  </div>
+                </template>
+                <div class="flex cursor-pointer flex-col gap-1">
+                  <NText tag="div" depth="1" strong class="line-clamp-2 pt-1 text-base" :title="video.summary">
+                    {{ video.summary }}
+                  </NText>
+                  <NText tag="div" depth="3" class="text-ellipsis text-xs">
+                    <template v-for="tag in video.videoTags" :key="tag.label">{{ `#${tag.label}  ` }}</template>
+                  </NText>
                 </div>
-              </template>
-              <div class="flex cursor-pointer flex-col gap-1">
-                <NText tag="div" depth="1" strong class="line-clamp-2 pt-1 text-base" :title="video.summary">
-                  {{ video.summary }}
-                </NText>
-                <NText tag="div" depth="3" class="text-ellipsis text-xs">
-                  <template v-for="tag in video.videoTags" :key="tag.label">{{ `#${tag.label}  ` }}</template>
-                </NText>
-              </div>
-            </NCard>
+              </NCard>
+            </div>
           </div>
-        </div>
+        </NSpin>
       </div>
 
       <div class="flex max-w-xs flex-col gap-2">
@@ -113,6 +116,45 @@
             </NButton>
           </NButtonGroup>
 
+          <NTooltip trigger="hover" placement="left">
+            <template #trigger>
+              <NButton v-if="orderStatusRef === 'CANCEL'" round class="h-10 w-9 px-0.5" text @click="addOrder">
+                <Icon name="material-symbols:playlist-add-rounded" size="24" />
+              </NButton>
+              <NButton
+                v-else-if="orderStatusRef === 'WAIT_HANDEL'"
+                round
+                class="h-10 w-9 px-0.5"
+                text
+                @click="gotoOrderPage"
+              >
+                <Icon name="material-symbols:playlist-add-check-rounded" size="24" />
+              </NButton>
+              <NButton
+                v-else-if="orderStatusRef === 'PROCESSING'"
+                round
+                class="h-10 w-9 px-0.5"
+                text
+                @click="gotoOrderPage"
+              >
+                <Icon name="material-symbols:cinematic-blur-outline" size="24" />
+              </NButton>
+              <NButton
+                v-else-if="orderStatusRef === 'WAIT_CONFIRM'"
+                round
+                class="h-10 w-9 px-0.5"
+                text
+                @click="gotoOrderPage"
+              >
+                <Icon name="material-symbols:playlist-play-rounded" size="24" />
+              </NButton>
+              <NButton v-else-if="orderStatusRef === 'DONE'" round class="h-10 w-9 px-0.5" text @click="gotoOrderPage">
+                <Icon name="material-symbols:ar-on-you-outline-rounded" size="24" />
+              </NButton>
+            </template>
+            {{ orderStatusBtnTextRef }}
+          </NTooltip>
+
           <NPopover trigger="hover" placement="left-end">
             <template #trigger>
               <NButton text>
@@ -143,14 +185,15 @@
 </template>
 
 <script setup lang="ts">
-import { NTag, NCard, NText, NButton, NButtonGroup, NPopover, NPopconfirm } from 'naive-ui'
+import { NTag, NCard, NText, NEmpty, NButton, NButtonGroup, NPopover, NPopconfirm, NSpin, NTooltip } from 'naive-ui'
 
 const {
   i18nRef,
 
   videoListRef,
+  isListEmptyRef,
   // videoListRefresh,
-  // videoListPendingRef,
+  videoListPendingRef,
 
   showVideoTypeParentListRef,
   showVideoTypeListRef,
@@ -171,6 +214,8 @@ const {
   showPrevVideoBtnRef,
   selectedVideoRef,
   summaryMoreRef,
+  orderStatusRef,
+  orderStatusBtnTextRef,
   summaryMoreToggle,
   selectVideo,
   closeVideoPlayer,
@@ -178,5 +223,7 @@ const {
   playPrevVideo,
   removeVideo,
   editVideo,
+  addOrder,
+  gotoOrderPage,
 } = useVideoList()
 </script>

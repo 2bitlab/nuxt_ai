@@ -5,12 +5,13 @@ const baseBuildTranspileList = [
   'trpc-nuxt',
   'qcloud-cos-sts',
   '@juggle/resize-observer',
+
   // '@vueuse/nuxt',
 ]
 
 const devBuildTranspileList = [...baseBuildTranspileList]
 
-const productionBuildTranspileList = [...baseBuildTranspileList, 'naive-ui', 'vueuc', '@css-render/vue3-ssr']
+const productionBuildTranspileList = [...baseBuildTranspileList, 'naive-ui', 'vueuc', '@css-render/vue3-ssr', 'dayjs']
 
 const isProduction = env.NODE_ENV === 'production'
 const isDev = env.NODE_ENV === 'development'

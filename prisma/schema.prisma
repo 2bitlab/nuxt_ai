@@ -107,11 +107,12 @@ enum ConfigValueKey {
     OPENAI_API_KEY
 }
 
-enum VideoTaskStatus {
+enum VideoOrderStatus {
     WAIT_HANDEL
     PROCESSING
     WAIT_CONFIRM
     DONE
+    CANCEL
 }
 
 enum PageStatus {
@@ -164,9 +165,9 @@ model User {
     creatorBalanceLogs BalanceLog[] @relation("BalanceLogCreator")
     crawlTasks CrawlTask[]
     videos Video[]
-    videoTasks VideoTask[]
-    handleVideos VideoTask[] @relation("VideoTaskHandler")
-    balnace Balnace[]
+    videoOrders VideoOrder[]
+    handleVideoOrders VideoOrder[] @relation("VideoTaskHandler")
+    balnace Balance[]
     roles UserRole[]
     permissions UserPermission[]
     creatorRoles Role[] @relation("CreatorRoles")
@@ -515,7 +516,7 @@ model Video {
     audioUrl String?
     copywritingUrl String?
     copywriting String?
-    videoTasks VideoTask[]
+    videoOrders VideoOrder[]
 }
 
 model VideoType {
@@ -541,7 +542,7 @@ model VideoSet {
 
 /// @@allow('all', auth() == creator)
 /// @@allow('read', auth() != null && published)
-model VideoTask {
+model VideoOrder {
     id String @id() @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt()
@@ -554,8 +555,51 @@ model VideoTask {
     video Video @relation(fields: [videoId], references: [id])
     handlerId String?
     handler User? @relation("VideoTaskHandler", fields: [handlerId], references: [id])
-    status VideoTaskStatus @default(WAIT_HANDEL)
+    status VideoOrderStatus @default(WAIT_HANDEL)
     price Decimal @default(0)
+    balanceLogId String @unique()
+    balanceLog BalanceLog @relation(fields: [balanceLogId], references: [id])
+}
+
+model Balance {
+    id String @id() @default(cuid())
+    availableBalance Decimal @default(0)
+    lockedBalance Decimal @default(0)
+    withdrawableBalance Decimal @default(0)
+    nonWithdrawableBalance Decimal @default(0)
+    withdrawLockedBalance Decimal @default(0)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique()
+}
+
+model BalanceLog {
+    id String @id() @default(cuid())
+    availableBalance Decimal @default(0)
+    lockedBalance Decimal @default(0)
+    withdrawableBalance Decimal @default(0)
+    nonWithdrawableBalance Decimal @default(0)
+    withdrawLockedBalance Decimal @default(0)
+    availableBalanceChange Decimal @default(0)
+    lockedBalanceChange Decimal @default(0)
+    withdrawableBalanceChange Decimal @default(0)
+    nonWithdrawableBalanceChange Decimal @default(0)
+    withdrawLockedBalanceChange Decimal @default(0)
+    availableBalanceBefore Decimal @default(0)
+    lockedBalanceBefore Decimal @default(0)
+    withdrawableBalanceBefore Decimal @default(0)
+    nonWithdrawableBalanceBefore Decimal @default(0)
+    withdrawLockedBalanceBefore Decimal @default(0)
+    remark String
+    log Json?
+    createdAt DateTime @default(now())
+    creatorId String?
+    creator User? @relation("BalanceLogCreator", fields: [creatorId], references: [id])
+    preBalanceLogId String?
+    preBalanceLog BalanceLog? @relation("BalanceLogHistory", fields: [preBalanceLogId], references: [id])
+    balanceLogs BalanceLog[] @relation("BalanceLogHistory")
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    videoOrders VideoOrder[]
 }
 
 model Site {
@@ -603,32 +647,6 @@ model CrawlTask {
     published Boolean @default(false)
     siteId String
     site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
-}
-
-model Balnace {
-    id String @id() @default(cuid())
-    balance Decimal @default(0)
-    lockBalance Decimal @default(0)
-    uesrId String @unique()
-    user User @relation(fields: [uesrId], references: [id], onDelete: Cascade)
-}
-
-model BalanceLog {
-    id String @id() @default(cuid())
-    balance Decimal @default(0)
-    change Decimal @default(0)
-    changeBefore Decimal @default(0)
-    remark String
-    log Json?
-    isLock Boolean @default(false)
-    createdAt DateTime @default(now())
-    creatorId String?
-    creator User? @relation("BalanceLogCreator", fields: [creatorId], references: [id])
-    preBalanceLogId String?
-    preBalanceLog BalanceLog? @relation("BalanceLogHistory", fields: [preBalanceLogId], references: [id])
-    balanceLogs BalanceLog[] @relation("BalanceLogHistory")
-    userId String
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Role {
