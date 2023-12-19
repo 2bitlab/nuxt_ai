@@ -7,6 +7,7 @@
           filterable
           clearable
           remote
+          :placeholder="i18nRef.myVideoOrderCreator"
           :options="userOptionsRef"
           :loading="userSearchLoadingRef"
           :render-label="userRenderLabel"
@@ -23,6 +24,7 @@
           filterable
           clearable
           remote
+          :placeholder="i18nRef.myVideoOrderHandler"
           :options="userOptionsRef"
           :loading="userSearchLoadingRef"
           :render-label="userRenderLabel"
@@ -52,11 +54,12 @@ import { NDataTable, NSelect, NDatePicker } from 'naive-ui'
 import type { VideoOrder } from '@prisma/client'
 import type { DataTableColumn } from 'naive-ui'
 
-import UserAvatarCard from '~/components/User/AvatarCard.vue'
-
 const NuxtLink = resolveComponent('NuxtLink')
+const VideoOrderHandler = resolveComponent('VideoOrderHandler')
+const UserAvatarCard = resolveComponent('UserAvatarCard')
+const VideoOrderStatus = resolveComponent('VideoOrderStatus')
 
-const { optionsRef, mapRef } = useVideoOrderStatusOptions()
+const { optionsRef } = useVideoOrderStatusOptions()
 
 const getI18nConfig = () => ({
   myVideoOrderVideo: '视频',
@@ -68,148 +71,159 @@ const getI18nConfig = () => ({
   myVideoOrderCreator: '下单人',
 })
 
-const { paginationReactive, loadingRef, whereRef, listRef, columnsRef, handleSorterChange, handleFiltersChange } =
-  useDataList({
-    model: 'videoOrder',
-    getI18nConfig,
-    getColumns: ({ i18nRef }) => {
-      const columns: DataTableColumn<VideoOrder>[] = [
-        {
-          title: i18nRef.myVideoOrderCreator,
-          key: 'creatorId',
-
-          resizable: true,
-          render: (row) => {
-            return h(UserAvatarCard, {
-              user: row.creator,
-              round: true,
-            })
-          },
+const {
+  i18nRef,
+  paginationReactive,
+  loadingRef,
+  whereRef,
+  listRef,
+  columnsRef,
+  handleSorterChange,
+  handleFiltersChange,
+} = useDataList({
+  model: 'videoOrder',
+  getI18nConfig,
+  getColumns: ({ i18nRef, refresh }) => {
+    const columns: DataTableColumn<VideoOrder>[] = [
+      {
+        title: i18nRef.myVideoOrderCreator,
+        key: 'creatorId',
+        width: 250,
+        resizable: true,
+        render: (row) => {
+          return h(UserAvatarCard, {
+            user: row.creator,
+            round: true,
+          })
         },
-        {
-          title: i18nRef.myVideoOrderVideo,
-          key: 'videoId',
-          sorter: {
-            multiple: 3,
-          },
-          resizable: true,
-          render: (row) => {
-            return h(
-              NuxtLink,
-              {
-                to: {
-                  path: '/',
-                  query: {
-                    id: row.videoId,
-                  },
+      },
+      {
+        title: i18nRef.myVideoOrderVideo,
+        key: 'videoId',
+        sorter: {
+          multiple: 3,
+        },
+        resizable: true,
+        render: (row) => {
+          return h(
+            NuxtLink,
+            {
+              to: {
+                path: '/',
+                query: {
+                  id: row.videoId,
                 },
               },
-              [
-                h('img', {
-                  src: row.video.cover,
-                  alt: row.video.title,
-                  class: 'w-16 h-16 object-cover rounded',
-                }),
-                h('div', row.video.title),
-              ]
-            )
-          },
+            },
+            [
+              h('img', {
+                src: row.video.cover,
+                alt: row.video.title,
+                class: 'w-16 h-16 object-cover rounded',
+              }),
+              h('div', row.video.title),
+            ]
+          )
         },
-        {
-          title: i18nRef.myVideoOrderPrice,
-          key: 'price',
-          sorter: {
-            multiple: 3,
-          },
-          resizable: true,
-          render: (row) => {
-            return row.price.toLocaleString('zh-CN', {
-              style: 'currency',
-              currency: 'CNY',
-            })
-          },
-        },
-        {
-          title: i18nRef.myVideoOrderStatus,
-          key: 'status',
-          sorter: {
-            multiple: 3,
-          },
-          resizable: true,
-          render: (row) => {
-            return mapRef.value[row.status]
-          },
-        },
-        {
-          title: i18nRef.myVideoOrderHandler,
-          key: 'handlerId',
-
-          resizable: true,
-          render: (row) => {
-            if (row.handlerId) {
-              return h(UserAvatarCard, {
-                user: row.handler,
-                round: true,
-              })
-            }
-            return '-'
-          },
-        },
-        {
-          title: i18nRef.dataTableCreatedAt,
-          key: 'createdAt',
-          width: 150,
-          sortOrder: 'descend' as any,
-          sorter: {
-            multiple: 3,
-          },
-          resizable: true,
-          render: (row) => {
-            return getDayjs(row.createdAt).format('YYYY-MM-DD HH:mm')
-          },
-        },
-      ]
-      return columns
-    },
-    getSelectForList: () => ({
-      select: {
-        id: true,
-        videoId: true,
-        video: {
-          select: {
-            id: true,
-            title: true,
-            coverUrl: true,
-          },
-        },
-        price: true,
-        balanceLogId: true,
-        status: true,
-        handlerId: true,
-        handler: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        creatorId: true,
-        creator: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        createdAt: true,
       },
-    }),
-    initOrderBy: () => [
       {
-        createdAt: 'desc',
+        title: i18nRef.myVideoOrderPrice,
+        key: 'price',
+        width: 100,
+        sorter: {
+          multiple: 3,
+        },
+        resizable: true,
+        render: (row) => {
+          return row.price.toLocaleString('zh-CN', {
+            style: 'currency',
+            currency: 'CNY',
+          })
+        },
       },
-    ],
-  })
+      {
+        title: i18nRef.myVideoOrderStatus,
+        key: 'status',
+        width: 150,
+        sorter: {
+          multiple: 3,
+        },
+        resizable: true,
+        render: (row) => {
+          return h(VideoOrderStatus, {
+            value: row,
+            refresh,
+          })
+        },
+      },
+      {
+        title: i18nRef.myVideoOrderHandler,
+        key: 'handlerId',
+
+        resizable: true,
+        width: 250,
+        render: (row) => {
+          return h(VideoOrderHandler, {
+            value: row,
+            refresh,
+          })
+        },
+      },
+      {
+        title: i18nRef.dataTableCreatedAt,
+        key: 'createdAt',
+        width: 150,
+        sortOrder: 'descend' as any,
+        sorter: {
+          multiple: 3,
+        },
+        resizable: true,
+        render: (row) => {
+          return getDayjs(row.createdAt).format('YYYY-MM-DD HH:mm')
+        },
+      },
+    ]
+    return columns
+  },
+  getSelectForList: () => ({
+    select: {
+      id: true,
+      videoId: true,
+      video: {
+        select: {
+          id: true,
+          title: true,
+          coverUrl: true,
+        },
+      },
+      price: true,
+      balanceLogId: true,
+      status: true,
+      handlerId: true,
+      handler: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      creatorId: true,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      createdAt: true,
+    },
+  }),
+  initOrderBy: () => [
+    {
+      createdAt: 'desc',
+    },
+  ],
+})
 
 const { rangeCreatedAtRef } = useCreatedAtSelect(whereRef)
 

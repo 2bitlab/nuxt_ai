@@ -555,6 +555,7 @@ model VideoOrder {
     video Video @relation(fields: [videoId], references: [id])
     handlerId String?
     handler User? @relation("VideoTaskHandler", fields: [handlerId], references: [id])
+    handleAt DateTime?
     status VideoOrderStatus @default(WAIT_HANDEL)
     price Decimal @default(0)
     balanceLogId String @unique()

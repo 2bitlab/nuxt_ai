@@ -369,6 +369,7 @@ export const useDataForm = <DataType extends { id: string }, I18nType>(
   }
 
   return {
+    i18nRef,
     rulesRef,
     formValueRef,
     addDrawerShowRef,

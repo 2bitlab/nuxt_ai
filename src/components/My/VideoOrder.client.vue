@@ -26,7 +26,7 @@ const NuxtLink = resolveComponent('NuxtLink')
 const VideoAvatarCard = resolveComponent('VideoAvatarCard')
 const UserAvatarCard = resolveComponent('UserAvatarCard')
 
-const MyVideoOrderStatus = resolveComponent('MyVideoOrderStatus')
+const VideoOrderStatus = resolveComponent('VideoOrderStatus')
 
 const { optionsRef } = useVideoOrderStatusOptions()
 
@@ -97,7 +97,7 @@ const { paginationReactive, loadingRef, whereRef, listRef, columnsRef, handleSor
           width: 150,
           resizable: true,
           render: (row) => {
-            return h(MyVideoOrderStatus, {
+            return h(VideoOrderStatus, {
               value: row,
               refresh,
             })
