@@ -1,0 +1,29 @@
+name: Sync branches
+on:
+  push:
+    branches:
+      - main
+      - master
+      - pro-tcloud
+      - uat-tcloud
+      - dev-tcloud
+
+    paths-ignore:
+      - 'api/**'
+      - '.vscode/**'
+      - 'docs/**'
+      - '**/**.md'
+# 使用并发取消任何当前作业或运行
+concurrency:
+  group: sync/${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Sync Branches and notify WeChat message start
+        uses: threfo/sync-branches-action@master
+        with:
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          wechatKey: ${{ secrets.WORK_WECHAT_GITHUB_ROBOT_KEY }}
