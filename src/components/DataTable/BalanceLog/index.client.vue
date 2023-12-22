@@ -1,25 +1,21 @@
 <template>
   <div class="container mx-auto flex flex-col gap-2 p-4">
     <div class="flex items-end justify-between gap-5">
-      <div class="flex flex-col gap-2">
-        <div>
-          <div>{{ i18nRef.dataTableBalanceLogUser }}</div>
-          <NSelect
-            v-model:value="formValueRef.userId"
-            filterable
-            clearable
-            remote
-            :options="optionsRef"
-            :loading="searchLoadingRef"
-            :render-label="renderLabel"
-            :render-tag="renderSingleSelectTag"
-            @search="handleSearch"
-          />
-        </div>
-        <div>
-          <div>{{ i18nRef.dataTableCreatedAt }}</div>
-          <NDatePicker v-model:value="rangeCreatedAtRef" type="daterange" clearable />
-        </div>
+      <div class="flex gap-2">
+        <NSelect
+          v-model:value="formValueRef.userId"
+          filterable
+          clearable
+          remote
+          :placeholder="i18nRef.dataTableBalanceLogUser"
+          :options="optionsRef"
+          :loading="searchLoadingRef"
+          :render-label="renderLabel"
+          :render-tag="renderSingleSelectTag"
+          @search="handleSearch"
+        />
+
+        <NDatePicker v-model:value="rangeCreatedAtRef" type="daterange" clearable />
       </div>
       <div class="flex gap-2">
         <NButton @click="openGiveAwayDrawer">{{ i18nRef.dataTableBalanceLogGiveAway }}</NButton>

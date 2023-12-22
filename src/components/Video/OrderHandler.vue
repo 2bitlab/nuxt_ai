@@ -1,7 +1,7 @@
 <template>
   <div>
     <UserAvatarCard v-if="value.handler" :user="value.handler" round />
-    <NButton v-else quaternary size="tiny" :loading="loadingRef" @click="handleOrder">{{
+    <NButton v-else quaternary size="tiny" :loading="loadingRef" type="primary" @click="handleOrder">{{
       i18nRef.videoOrderHandleHandleIt
     }}</NButton>
   </div>

@@ -154,6 +154,7 @@ const { paginationReactive, loadingRef, whereRef, listRef, columnsRef, handleSor
             id: true,
             name: true,
             email: true,
+            image: true,
           },
         },
         createdAt: true,

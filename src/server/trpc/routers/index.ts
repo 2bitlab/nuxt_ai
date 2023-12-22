@@ -6,6 +6,7 @@ import { appRouter as redis } from './redis'
 import { appRouter as vectorDb } from './vectorDb'
 import { appRouter as crawler } from './crawler'
 import { appRouter as balance } from './balance'
+import { appRouter as email } from './email'
 
 export const appRouter = router({
   db: createRouter(router, protectedProcedure),
@@ -15,6 +16,7 @@ export const appRouter = router({
   vectorDb,
   crawler,
   balance,
+  email,
 })
 
 // export type definition of API

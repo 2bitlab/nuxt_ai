@@ -207,8 +207,6 @@ export const appRouter = router({
           willSave.nonWithdrawableBalance = nonWithdrawableBalance
           willSave.nonWithdrawableBalanceChange = nonWithdrawableBalanceChange
         }
-      } else {
-        throw new Error('没有溯源记录')
       }
 
       if (balance.lt(0)) {
@@ -221,12 +219,13 @@ export const appRouter = router({
     .input(
       z.object({
         id: z.string(),
+        remark: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { user, prisma } = ctx
       const { id = '' } = user || {}
-      const { id: balanceLogId } = input || {}
+      const { id: balanceLogId, remark = '支付确认' } = input || {}
 
       const balanceLog = await prisma.balanceLog.findFirst({
         where: {
@@ -239,7 +238,7 @@ export const appRouter = router({
         throw new Error('无效的记录')
       }
 
-      const { willSave, lastLog } = await initBalanceLog({ prisma, userId: id, remark: '支付确认', creatorId: id })
+      const { willSave, lastLog } = await initBalanceLog({ prisma, userId: id, remark, creatorId: id })
 
       if (lastLog) {
         willSave.lockedBalance = lastLog.lockedBalance.sub(balanceLog.lockedBalanceChange)

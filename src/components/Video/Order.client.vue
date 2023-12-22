@@ -58,6 +58,7 @@ const NuxtLink = resolveComponent('NuxtLink')
 const VideoOrderHandler = resolveComponent('VideoOrderHandler')
 const UserAvatarCard = resolveComponent('UserAvatarCard')
 const VideoOrderStatus = resolveComponent('VideoOrderStatus')
+const VideoAvatarCard = resolveComponent('VideoAvatarCard')
 
 const { optionsRef } = useVideoOrderStatusOptions()
 
@@ -116,12 +117,9 @@ const {
               },
             },
             [
-              h('img', {
-                src: row.video.cover,
-                alt: row.video.title,
-                class: 'w-16 h-16 object-cover rounded',
+              h(VideoAvatarCard, {
+                video: row.video,
               }),
-              h('div', row.video.title),
             ]
           )
         },
@@ -205,6 +203,7 @@ const {
           id: true,
           name: true,
           email: true,
+          image: true,
         },
       },
       creatorId: true,
@@ -213,6 +212,7 @@ const {
           id: true,
           name: true,
           email: true,
+          image: true,
         },
       },
       createdAt: true,

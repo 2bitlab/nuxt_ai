@@ -80,7 +80,7 @@ export const useDataI18n = <I18nType>({
 export const useDataList = <DataType extends { id: string }, I18nType>(
   props: {
     model: ModelType
-    getColumns: GetColumnsFunc
+    getColumns: GetColumnsFunc<DataType, I18nType>
     refresh?: () => void
     getStatusLoading?: (statusLoading: boolean) => boolean
     getSelectForList?: () => { select?: Record<string, any> }
@@ -360,6 +360,8 @@ export const useDataForm = <DataType extends { id: string }, I18nType>(
       message.success(i18nRef.dataTableSaveSuccessTips)
 
       addDrawerShowRef.value = false
+
+      setResValue2Form(formValueRef, getDefFormData())
     } catch (error) {
       console.error('error', error)
       loadingRef.value = false
@@ -381,7 +383,7 @@ export const useDataForm = <DataType extends { id: string }, I18nType>(
 export const useDataTable = <DataType extends { id: string }, I18nType>(
   props: {
     model: ModelType
-    getColumns: GetColumnsFunc
+    getColumns: GetColumnsFunc<DataType, I18nType>
     getRules?: (i18nRef: UnwrapNestedRefs<DataTableI18nType & I18nType>) => FormRules
     getDefFormData?: () => Partial<DataType>
     refresh?: () => void

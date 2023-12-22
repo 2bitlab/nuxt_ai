@@ -13,14 +13,16 @@ model User {
   id String @id @default(cuid())
   name String? @unique
   email String? @unique
-  emailVerified DateTime?
+  emailVerified DateTime? @map("email_verified")
   image String? // 头像
-  phone String?
-  role String?
   accounts Account[]
   sessions Session[]
 
+  @@map("users")
+
   // next auth 自定义
+  phone String?
+  role String?
   password String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
@@ -70,12 +72,12 @@ model User {
   videos Video[]
   videoOrders VideoOrder[]
 
-  handleVideoOrders VideoOrder[]  @relation("VideoTaskHandler")
+  handleVideoOrders VideoOrder[] @relation("VideoTaskHandler")
 
-  balnace Balance[]
+  balance Balance[]
 
-	roles UserRole[]
-	permissions UserPermission[]
+  roles UserRole[]
+  permissions UserPermission[]
 
   creatorRoles Role[] @relation("CreatorRoles")
   creatorUserRoles UserRole[] @relation("CreatorUserRoles")
@@ -84,28 +86,33 @@ model User {
 }
 
 model Account {
-  userId String
+  id String @id @default(cuid())
+  userId String @map("user_id")
   type String
   provider String
-  providerAccountId String
-  refresh_token String?
-  access_token String?
+  providerAccountId String @map("provider_account_id")
+  refresh_token String? @db.Text
+  access_token String? @db.Text
   expires_at Int?
   token_type String?
   scope String?
-  id_token String?
+  id_token String? @db.Text
   session_state String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
-  sessionToken String @unique
-  userId String
+  id String @id @default(cuid())
+  sessionToken String @unique @map("session_token")
+  userId String @map("user_id")
   expires DateTime
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -113,7 +120,8 @@ model VerificationToken {
   token String @unique
   expires DateTime
 
-  @@id([identifier, token])
+  @@unique([identifier, token])
+  @@map("verificationtokens")
 }
 
 

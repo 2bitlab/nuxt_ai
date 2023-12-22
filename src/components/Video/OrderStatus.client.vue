@@ -64,7 +64,7 @@ const currentUserIdRef = useCurrentUserId()
 const canViewRef = computed(() => {
   const { value: row } = props
 
-  const cantViewStatus: VideoOrderStatus[] = ['WAIT_HANDEL', 'PROCESSING', 'CANCEL']
+  const cantViewStatus: VideoOrderStatus[] = ['WAIT_HANDEL', 'CANCEL']
 
   return (
     !cantViewStatus.includes(row.status) &&

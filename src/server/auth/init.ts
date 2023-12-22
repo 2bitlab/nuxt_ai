@@ -252,7 +252,7 @@ export const getAuthOptions = (): AuthConfig => {
         //   return true
         // },
       },
-      adapter: PrismaAdapter(getPrisma()) as AuthConfig['adapter'],
+      adapter: PrismaAdapter(getPrisma()),
       providers: getProviders(),
       pages: {
         signIn: '/signin',

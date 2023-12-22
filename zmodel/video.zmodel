@@ -24,7 +24,7 @@ model Video extends Base {
   price Decimal @default(0) // 售价
   audioUrl String?
   copywritingUrl String? // 文案
-  copywriting String? // 文案
+  copywriting String? @db.MediumText // 文案
 
   // 相关
   videoOrders VideoOrder[]
@@ -77,6 +77,11 @@ model VideoOrder extends Base {
   status VideoOrderStatus @default(WAIT_HANDEL)
 
   price Decimal @default(0)
+
+  finishedVideoUrl String? // 成品视频地址
+  finishedAt DateTime? // 成品视频时间
+
+  doneAt DateTime? // 客户确认时间
 
   balanceLogId String @unique
   balanceLog BalanceLog @relation(fields: [balanceLogId], references: [id])

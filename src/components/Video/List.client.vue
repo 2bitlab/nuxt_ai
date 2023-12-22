@@ -93,7 +93,7 @@
         </NButton>
       </div>
 
-      <div class="absolute bottom-20 left-4 right-4 z-10 flex items-end justify-between gap-10">
+      <div class="absolute bottom-20 left-4 right-4 z-[1] flex items-end justify-between gap-10">
         <div v-if="selectedVideoRef" class="flex flex-col gap-4">
           <div
             class="text-base font-bold"
@@ -174,12 +174,7 @@
         </div>
       </div>
 
-      <VideoPlayer
-        v-if="mulQualityVideoOptionsRef"
-        :key="queryVideoIdRef"
-        class="h-screen w-screen"
-        :options="mulQualityVideoOptionsRef"
-      />
+      <VideoPlayer v-if="mulQualityVideoOptionsRef" class="h-screen w-screen" :options="mulQualityVideoOptionsRef" />
     </div>
   </div>
 </template>
@@ -207,7 +202,6 @@ const {
   // videoTagListPendingRef,
   checkVideo,
 
-  queryVideoIdRef,
   showVideoPlayerRef,
   mulQualityVideoOptionsRef,
   showNextVideoBtnRef,

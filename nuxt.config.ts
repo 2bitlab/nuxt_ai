@@ -5,7 +5,6 @@ const baseBuildTranspileList = [
   'trpc-nuxt',
   'qcloud-cos-sts',
   '@juggle/resize-observer',
-
   // '@vueuse/nuxt',
 ]
 
@@ -48,6 +47,10 @@ export default defineNuxtConfig({
     define: {
       'import.meta.vitest': 'undefined',
     },
+  },
+
+  devServer: {
+    port: parseInt(`${env.PORT || 3000}`, 10),
   },
 
   // module 的相关配置

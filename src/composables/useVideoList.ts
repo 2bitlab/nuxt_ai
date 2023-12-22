@@ -273,15 +273,19 @@ export const useVideoList = () => {
   }
 
   const mulQualityVideoOptionsRef = computed(() => {
-    const { mulQualityVideos: quality = [] } = selectedVideoRef.value || {}
+    const { mulQualityVideos: quality = [], coverUrl: pic } = selectedVideoRef.value || {}
 
     console.log('mulQualityVideoOptionsRef quality', quality)
 
-    if (quality.length) {
+    const [first] = quality || []
+    const { url } = first || {}
+    if (url) {
       return {
         video: {
+          url,
           quality,
           defaultQuality: 0,
+          pic,
         },
         autoplay: true,
         loop: true,
@@ -426,7 +430,7 @@ export const useVideoList = () => {
       await videoListRefresh()
     } catch (error) {
       console.error('error', error)
-      message.error(error)
+      message.error(error.message)
     }
   }
 
