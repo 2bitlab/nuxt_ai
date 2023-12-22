@@ -126,5 +126,10 @@
     "uuid": "^9.0.1",
     "x-crawl": "^8.3.0",
     "zod": "^3.22.4"
+  },
+  "syncBranches": {
+    "master": "pro-tcloud",
+    "pro-tcloud": "uat-tcloud",
+    "uat-tcloud": "dev-tcloud"
   }
 }
