@@ -156,7 +156,7 @@ const {
     return loading || groupStatusStatusRef.value === 'pending'
   },
 
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<Company>[] = [
       {
         title: '',

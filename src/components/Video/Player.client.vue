@@ -10,37 +10,43 @@
 
 type V = string
 
+type Video = {
+  url?: string
+  thumbnails?: string[]
+  type?: 'auto' | 'hls' | 'flv' | 'dash' | 'webtorrent' | 'normal'
+  quality?: {
+    name: string
+    url: string
+    type: 'hls'
+  }[]
+  defaultQuality?: number
+}
+
+type Options = {
+  poster?: string
+  autoplay?: boolean
+  loop?: boolean
+  screenshot?: boolean
+  hotkey?: boolean
+  airplay?: boolean
+  chromecast?: boolean
+  preload?: 'none' | 'auto' | 'metadata'
+  volume?: number // 0.7
+  playbackSpeed?: number[]
+  video?: Video
+}
+
 const props = defineProps<{
   src?: V
 
-  options?: {
-    poster?: string
-    autoplay?: boolean
-    loop?: boolean
-    screenshot?: boolean
-    hotkey?: boolean
-    airplay?: boolean
-    chromecast?: boolean
-    preload?: 'none' | 'auto' | 'metadata'
-    volume?: number // 0.7
-    playbackSpeed?: number[]
-    video?: {
-      thumbnails?: string[]
-      type?: 'auto' | 'hls' | 'flv' | 'dash' | 'webtorrent' | 'normal'
-      quality?: {
-        name: string
-        url: string
-        type: 'hls'
-      }[]
-      defaultQuality?: number
-    }
-  } // TCPlayer 上的构建参数
+  options?: Options // TCPlayer 上的构建参数
 }>()
 
 interface VideoPlayer {
-  set: (v: any) => void
-  get: () => any
-  focus: () => void
+  switchVideo: (video: Video) => void
+  play: () => void
+  pause: () => void
+  toggle: () => void
 }
 
 const getVideoPlayer = async (): Promise<VideoPlayer> => {
@@ -101,6 +107,18 @@ const initPropsRef = computed(() => {
   return null
 })
 
+const videoRef = computed(() => {
+  const newOptions: Options = {
+    video: {
+      url: props.src,
+    },
+    ...(props.options || {}),
+  }
+  const { video } = newOptions
+
+  return video
+})
+
 const init = async () => {
   const ele = initPropsRef.value
   if (ele) {
@@ -142,6 +160,17 @@ watch(
   },
   {
     immediate: true,
+  }
+)
+
+watch(
+  () => videoRef.value,
+  async (newValue) => {
+    if (player && newValue) {
+      console.log('videoRef.value watch newValue', newValue)
+      player.switchVideo(newValue)
+      player.play()
+    }
   }
 )
 

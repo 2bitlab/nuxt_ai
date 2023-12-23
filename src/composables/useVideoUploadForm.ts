@@ -1,11 +1,11 @@
-import { useThemeVars, useMessage, useDialog } from 'naive-ui'
+import { useMessage, useDialog } from 'naive-ui'
 
 import { debounce, merge } from 'lodash-es'
 import type { UploadCustomRequestOptions, FormRules, FormInst, CascaderOption, SelectOption } from 'naive-ui'
 import type { Video, VideoType } from '@prisma/client'
 import { useStorage, useUrlSearchParams } from '@vueuse/core'
 
-type FormDataType = Partial<Video & { videoTags?: string[] }>
+type FormDataType = Partial<Video & { videoTags?: string[]; price: number }>
 type PostFormDataType = Partial<
   Video & {
     videoTags: {
@@ -243,7 +243,7 @@ export const useVideoEditForm = () => {
     return id as string
   })
 
-  const getDefForm = () => ({
+  const getDefForm = (): FormDataType => ({
     title: '',
     summary: '',
     // coverUrl: 'https://shop-1300204402.cos.ap-guangzhou.myqcloud.com/data/89b7ddb6-3b76-44d9-9dac-7bcf17d7e247__cropImage.png',
@@ -251,7 +251,7 @@ export const useVideoEditForm = () => {
     videoTypeId: '',
     videoTags: [],
     videoSetId: '',
-    price: 0,
+    price: 0 as any,
     published: true,
   })
 
@@ -478,24 +478,10 @@ export const useVideoUploadForm = () => {
 
   const { videoTagsOptionsRef, videoTagsOptionsLoadingRef, handleSearchVideoTags } = useVideoTags()
 
-  const themeVarsRef = useThemeVars()
-
-  const bgRef = computed(() => {
-    const themeVars = themeVarsRef.value
-    return {
-      backgroundColor: themeVars.actionColor,
-    }
-  })
-  const stepRef = ref(2)
-
-  const formWarperClassRef = computed(() => {
-    return stepRef.value === 1 ? '' : 'flex gap-4'
-  })
-
   const fileRef = ref<UploadCustomRequestOptions['file'] | null>(null)
 
   const draftVideoFormDataRef = useStorage<FormDataType>('draftVideoFormData', {})
-
+  const stepRef = ref(Object.keys(draftVideoFormDataRef.value).length ? 2 : 1)
   const formValue = reactive<FormDataType>(
     merge(
       {
@@ -516,6 +502,9 @@ export const useVideoUploadForm = () => {
       fixEmptyKey(draftVideoFormDataRef.value)
     )
   )
+  const formWarperClassRef = computed(() => {
+    return stepRef.value === 1 ? '' : 'flex gap-4'
+  })
 
   watch(
     () => formValue,
@@ -631,25 +620,6 @@ export const useVideoUploadForm = () => {
 
   const router = useRouter()
 
-  let checkUrlCount = 0
-  const checkUrl = async (url: string) => {
-    checkUrlCount++
-    try {
-      const res = await $fetch(url)
-      console.log('checkUrl res', res)
-      return true
-    } catch (error) {
-      console.error('checkUrl', url, error)
-
-      if (checkUrlCount > 10) {
-        return false
-      }
-
-      await sleep(2000)
-      return await checkUrl(url)
-    }
-  }
-
   const dialog = useDialog()
 
   const handleSaveButtonClick = async (e: MouseEvent) => {
@@ -705,7 +675,7 @@ export const useVideoUploadForm = () => {
 
       const { url: formatAfterUrl } = (firstVideo || {}) as any
 
-      const isPass = await checkUrl(formatAfterUrl)
+      const isPass = await new CheckUrl().check(formatAfterUrl)
 
       if (isPass) {
         gotoPaly()
@@ -752,7 +722,6 @@ export const useVideoUploadForm = () => {
     noFileRef,
     videoTypeRef,
     formWarperClassRef,
-    bgRef,
     handleSearchVideoTags,
     videoSetsOptionsRef,
     videoTypeCascaderOptionsRef,

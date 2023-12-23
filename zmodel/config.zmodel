@@ -7,6 +7,9 @@ enum ConfigValueKey {
 
   OPENAI_API_KEY // openAi api key
 
+  EMAIL_SMTP // 邮件smtp配置
+
+  WORK_WECHAT_ROBOT_KEY // 企业微信机器人key
 }
 
 model ConfigValue extends Base {

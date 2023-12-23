@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-[1.375rem]">
-    <NSwitch v-model:value="inputValueRef" @change="handleChange" />
+    <NSwitch v-model:value="inputValueRef" :on-update:value="handleChange" />
   </div>
 </template>
 

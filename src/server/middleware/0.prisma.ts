@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
 
 import type { Session } from '@auth/core/types'
 // eslint-disable-next-line import/named
@@ -32,10 +32,4 @@ export default defineEventHandler(async (event) => {
   event.context.session = session
   event.context.user = user || null
   event.context.prisma = prisma
-
-  // return {
-  //   session,
-  //   user: user || null,
-  //   prisma,
-  // }
 })
