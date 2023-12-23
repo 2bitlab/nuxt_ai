@@ -46,7 +46,7 @@ const getI18nConfig = () => ({
 
 const { i18nRef } = useI18n(getI18nConfig())
 
-const { signIn, sessionToken } = useAuth()
+const { signIn } = useAuth()
 
 const formRef = ref<FormInst | null>()
 const formValueRef = reactive<{ email: string; password: string }>({
@@ -71,7 +71,7 @@ const onSubmit = async (e: MouseEvent) => {
   const willPost: SignInOptions = {
     email: formValueRef.email,
     password: formValueRef.password,
-    csrfToken: sessionToken.value,
+    // csrfToken: sessionToken.value,
     inviter: '',
   }
 

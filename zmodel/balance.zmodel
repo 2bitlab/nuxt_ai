@@ -2,28 +2,56 @@
 import "base"
 import "user"
 
-model Balnace {
+
+// 一个用户只有一个账号，记录他的可用余额、锁定余额、可提现余额、不可提现余额
+// 可用余额包含可提现余额和不可提现余额
+//
+// 系统赠送的余额，只能用于购买商品，不能提现
+// 用户支付时，优先使用可提现余额，不够的部分使用不可提现余额，不够的部分使用其他第三方支付
+// 用户退货时，根据当时支付时用的钱属于那种余额，退回到对应的余额中，如支付时用了可提现余额10元和不可提现余额5元，退货时，可提现余额退回到可提现余额中10元，不可提现余额退回到不可提现余额中5元
+// 用户提现时，只能提现可提现余额，不可提现余额不能提现
+// 用户提现时，如果提现金额大于可提现余额，则提现失败
+// 用户确认收货后，锁定余额减少当时支付的金额
+// 记录详细的各种余额的流水，包括各种余额变动前的余额、变动金额、变动后的余额、备注、创建时间、创建人等
+
+
+model Balance {
   id String @id @default(cuid())
 
-  balance Decimal @default(0) // 剩余余额
-  lockBalance Decimal @default(0) // 被锁定的余额
+  availableBalance Decimal @default(0) // 可用余额
+  lockedBalance Decimal @default(0) // 锁定余额
+  withdrawableBalance Decimal @default(0) // 可提现余额
+  nonWithdrawableBalance Decimal @default(0) // 不可提现余额
+  withdrawLockedBalance Decimal @default(0) // 提现锁定余额
 
-  // User 和 Balance 是一对一的关系
-  uesrId String @unique
-  user User @relation(fields: [uesrId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
 }
 
 model BalanceLog {
   id String @id @default(cuid())
 
-  balance Decimal @default(0) // 余额
-  change Decimal @default(0) // 变动
-  changeBefore Decimal @default(0) // 变动前余额
+  availableBalance Decimal @default(0) // 余额
+  lockedBalance Decimal @default(0) // 锁定余额
+  withdrawableBalance Decimal @default(0) // 可提现余额
+  nonWithdrawableBalance Decimal @default(0) // 不可提现余额
+  withdrawLockedBalance Decimal @default(0) // 提现锁定余额
+
+  availableBalanceChange Decimal @default(0) // 余额
+  lockedBalanceChange Decimal @default(0) // 锁定余额
+  withdrawableBalanceChange Decimal @default(0) // 可提现余额
+  nonWithdrawableBalanceChange Decimal @default(0) // 不可提现余额
+  withdrawLockedBalanceChange Decimal @default(0) // 提现锁定余额
+
+  availableBalanceBefore Decimal @default(0) // 余额
+  lockedBalanceBefore Decimal @default(0) // 锁定余额
+  withdrawableBalanceBefore Decimal @default(0) // 可提现余额
+  nonWithdrawableBalanceBefore Decimal @default(0) // 不可提现余额
+  withdrawLockedBalanceBefore Decimal @default(0) // 提现锁定余额
+
 
   remark String // 备注
   log Json? // 其他log 的信息
-
-  isLock Boolean @default(false) // 是否是锁定的余额
 
   createdAt DateTime @default(now())
   creatorId String?
@@ -35,4 +63,6 @@ model BalanceLog {
 
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  videoOrders VideoOrder[]
 }

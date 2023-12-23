@@ -1,12 +1,12 @@
 <template>
-  <div class="flex h-screen w-screen flex-col items-center justify-center gap-5">
+  <div class="flex h-[90vh] w-screen flex-col items-center justify-center gap-5">
     <NResult size="huge" :status="status" :title="errorMsgRef">
       <template #footer>
         <NButton v-if="showGoToSignIn" size="large" quaternary @click="() => signIn()">{{
           i18nRef.errorPageBtnGotoSignIn
         }}</NButton>
         <NuxtLink to="/">
-          <NButton v-if="showGoToSignIn" size="large" quaternary>{{ i18nRef.errorPageBtnGotoHome }}</NButton>
+          <NButton size="large" quaternary>{{ i18nRef.errorPageBtnGotoHome }}</NButton>
         </NuxtLink>
       </template>
     </NResult>
@@ -15,6 +15,8 @@
 
 <script setup lang="ts">
 import { NButton, NResult } from 'naive-ui'
+
+import type { ResultProps } from 'naive-ui'
 
 type ErrorType = 'Verification'
 
@@ -28,14 +30,14 @@ const getI18nConfig = () => ({
 
 const { i18nRef } = useI18n(getI18nConfig())
 
-const { query } = useRoute()
+const query = useUrlSearchParams('history')
 
 const { error = '', msg } = (query || {}) as {
   error: string
   msg: string
 }
 let { status } = (query || {}) as {
-  status?: string
+  status?: ResultProps.Status
 }
 
 const showGoToSignIn = error === 'Verification'

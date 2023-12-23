@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { publicProcedure, router } from '../trpc'
+import { protectedProcedure, router } from '../trpc'
 import { crawlPage } from '~/server/crawler'
 
 export const appRouter = router({
-  map: publicProcedure
+  map: protectedProcedure
     .input(
       z.object({
         url: z.string().url(),
@@ -15,7 +15,7 @@ export const appRouter = router({
         url,
       }
     }),
-  crawl: publicProcedure
+  crawl: protectedProcedure
     .input(
       z.object({
         url: z.string().url(),

@@ -29,7 +29,7 @@ services:
     environment:
       - MYSQL_PASSWORD=default
       - MYSQL_ROOT_PASSWORD=default
-      - MYSQL_DATABASE=trpc-vue-vite-ssr-dev
+      - MYSQL_DATABASE=nuxt-ai-db-dev
       - 'TZ=Asia/Shanghai'
   redis_dev:
     image: redis:7

@@ -10,7 +10,7 @@ const baseBuildTranspileList = [
 
 const devBuildTranspileList = [...baseBuildTranspileList]
 
-const productionBuildTranspileList = [...baseBuildTranspileList, 'naive-ui', 'vueuc', '@css-render/vue3-ssr']
+const productionBuildTranspileList = [...baseBuildTranspileList, 'naive-ui', 'vueuc', '@css-render/vue3-ssr', 'dayjs']
 
 const isProduction = env.NODE_ENV === 'production'
 const isDev = env.NODE_ENV === 'development'
@@ -47,6 +47,10 @@ export default defineNuxtConfig({
     define: {
       'import.meta.vitest': 'undefined',
     },
+  },
+
+  devServer: {
+    port: parseInt(`${env.PORT || 3000}`, 10),
   },
 
   // module 的相关配置

@@ -16,3 +16,6 @@ pnpm-lock.yaml
 packages/ts-config/base.json
 
 lib/*
+
+
+src/server/trpc/routers/db/*.ts

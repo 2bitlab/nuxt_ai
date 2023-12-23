@@ -9,7 +9,7 @@ dependencies:
     specifier: ^0.18.4
     version: registry.npmmirror.com/@auth/core@0.18.4(nodemailer@6.9.7)
   '@auth/prisma-adapter':
-    specifier: ^1.0.9
+    specifier: 1.0.9
     version: registry.npmmirror.com/@auth/prisma-adapter@1.0.9(@prisma/client@5.6.0)(nodemailer@6.9.7)
   '@hebilicious/authjs-nuxt':
     specifier: ^0.3.5
@@ -102,7 +102,7 @@ devDependencies:
     version: registry.npmmirror.com/@css-render/vue3-ssr@0.15.12(vue@3.3.9)
   '@nuxt/devtools':
     specifier: latest
-    version: registry.npmmirror.com/@nuxt/devtools@1.0.5(nuxt@3.8.2)(vite@4.5.0)
+    version: registry.npmmirror.com/@nuxt/devtools@1.0.6(nuxt@3.8.2)(vite@4.5.0)
   '@nuxtjs/eslint-config-typescript':
     specifier: ^12.1.0
     version: registry.npmmirror.com/@nuxtjs/eslint-config-typescript@12.1.0(eslint@8.54.0)(typescript@5.3.2)
@@ -269,10 +269,10 @@ packages:
     version: 0.21.8
     hasBin: true
 
-  registry.npmmirror.com/@antfu/utils@0.7.6:
-    resolution: {integrity: sha512-pvFiLP2BeOKA/ZOS6jxx4XhKzdVLHDhGlFEaZ2flWWYf2xOqVniqpk38I04DFRyz+L0ASggl7SkItTc+ZLju4w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@antfu/utils/-/utils-0.7.6.tgz}
+  registry.npmmirror.com/@antfu/utils@0.7.7:
+    resolution: {integrity: sha512-gFPqTG7otEJ8uP6wrhDv6mqwGWYZKNvAcCq6u9hOj0c+IKCEsY4L1oC9trPq2SaWIzAfHvqfBDxF591JkMf+kg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@antfu/utils/-/utils-0.7.7.tgz}
     name: '@antfu/utils'
-    version: 0.7.6
+    version: 0.7.7
 
   registry.npmmirror.com/@auth/core@0.18.4(nodemailer@6.9.7):
     resolution: {integrity: sha512-GsNhsP1xE/3FoNS3dVkPjqRljLNJ4iyL2OLv3klQGNvw3bMpROFcK4lqhx7+pPHiamnVaYt2vg1xbB+lsNaevg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@auth/core/-/core-0.18.4.tgz}
@@ -1965,13 +1965,13 @@ packages:
       - supports-color
     dev: true
 
-  registry.npmmirror.com/@nuxt/devtools-kit@1.0.5(nuxt@3.8.2)(vite@4.5.0):
-    resolution: {integrity: sha512-2SbsYZngD0r6nZCXhEKQ8E6sc10uaYMiN3VicoHj0fZSXNEYjJjLRQ3xD+hbmiqM4dRMGeR06IU6E/Ff0asDcQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nuxt/devtools-kit/-/devtools-kit-1.0.5.tgz}
-    id: registry.npmmirror.com/@nuxt/devtools-kit/1.0.5
+  registry.npmmirror.com/@nuxt/devtools-kit@1.0.6(nuxt@3.8.2)(vite@4.5.0):
+    resolution: {integrity: sha512-CUSE++NRTIwvBWbLsPzLZIDMpXr6oyllaWm8tOR3Wgr/04jW31uyWbXjU/fxRuDotQwZfcTe19uunRoCoBnk1Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nuxt/devtools-kit/-/devtools-kit-1.0.6.tgz}
+    id: registry.npmmirror.com/@nuxt/devtools-kit/1.0.6
     name: '@nuxt/devtools-kit'
-    version: 1.0.5
+    version: 1.0.6
     peerDependencies:
-      nuxt: ^3.8.1
+      nuxt: ^3.8.2
       vite: '*'
     dependencies:
       '@nuxt/kit': registry.npmmirror.com/@nuxt/kit@3.8.2
@@ -1983,10 +1983,10 @@ packages:
       - rollup
       - supports-color
 
-  registry.npmmirror.com/@nuxt/devtools-wizard@1.0.5:
-    resolution: {integrity: sha512-1O6uZaR76bu9NGN5qEtxYRf6INLA7FFr4agnw+UUdWKxJqbYoPNrKe9TqgukoPoDdrEG5vm0tDuRMNPIpVJ3mg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nuxt/devtools-wizard/-/devtools-wizard-1.0.5.tgz}
+  registry.npmmirror.com/@nuxt/devtools-wizard@1.0.6:
+    resolution: {integrity: sha512-44G+t2sQQii3TPnmktlrZryC4pw7t77GUV7wneEicLGU+w5I5ib7taVMJy8+yBC3kpTs5eYHOmqI63Dqvr73tw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nuxt/devtools-wizard/-/devtools-wizard-1.0.6.tgz}
     name: '@nuxt/devtools-wizard'
-    version: 1.0.5
+    version: 1.0.6
     hasBin: true
     dependencies:
       consola: registry.npmmirror.com/consola@3.2.3
@@ -2000,19 +2000,19 @@ packages:
       rc9: registry.npmmirror.com/rc9@2.1.1
       semver: registry.npmmirror.com/semver@7.5.4
 
-  registry.npmmirror.com/@nuxt/devtools@1.0.5(nuxt@3.8.2)(vite@4.5.0):
-    resolution: {integrity: sha512-kGgxDFD3/Zw0HqCRl+S+ZIZ0NxGJoiseTzKreD2sW8q7otnqSSjte3z4qhGWI2HpvwN0Gwu/C4FtfkAVGUxPTQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nuxt/devtools/-/devtools-1.0.5.tgz}
-    id: registry.npmmirror.com/@nuxt/devtools/1.0.5
+  registry.npmmirror.com/@nuxt/devtools@1.0.6(nuxt@3.8.2)(vite@4.5.0):
+    resolution: {integrity: sha512-3P914IHBvKl2aYSrwaCAU9E1ndVNnGJR0Jn0XKUFktsbjU5kGlwLGrtRKXAw4Yz1VNiSZPrapVrFOQWbXRGRvg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@nuxt/devtools/-/devtools-1.0.6.tgz}
+    id: registry.npmmirror.com/@nuxt/devtools/1.0.6
     name: '@nuxt/devtools'
-    version: 1.0.5
+    version: 1.0.6
     hasBin: true
     peerDependencies:
-      nuxt: ^3.8.1
+      nuxt: ^3.8.2
       vite: '*'
     dependencies:
-      '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.6
-      '@nuxt/devtools-kit': registry.npmmirror.com/@nuxt/devtools-kit@1.0.5(nuxt@3.8.2)(vite@4.5.0)
-      '@nuxt/devtools-wizard': registry.npmmirror.com/@nuxt/devtools-wizard@1.0.5
+      '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.7
+      '@nuxt/devtools-kit': registry.npmmirror.com/@nuxt/devtools-kit@1.0.6(nuxt@3.8.2)(vite@4.5.0)
+      '@nuxt/devtools-wizard': registry.npmmirror.com/@nuxt/devtools-wizard@1.0.6
       '@nuxt/kit': registry.npmmirror.com/@nuxt/kit@3.8.2
       birpc: registry.npmmirror.com/birpc@0.2.14
       consola: registry.npmmirror.com/consola@3.2.3
@@ -2048,7 +2048,7 @@ packages:
       vite-plugin-inspect: registry.npmmirror.com/vite-plugin-inspect@0.8.1(@nuxt/kit@3.8.2)(vite@4.5.0)
       vite-plugin-vue-inspector: registry.npmmirror.com/vite-plugin-vue-inspector@4.0.2(vite@4.5.0)
       which: registry.npmmirror.com/which@3.0.1
-      ws: registry.npmmirror.com/ws@8.14.2
+      ws: registry.npmmirror.com/ws@8.15.1
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -4839,7 +4839,7 @@ packages:
     engines: {node: '>=16.14.0'}
     dependencies:
       '@babel/parser': registry.npmmirror.com/@babel/parser@7.23.4
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.5(rollup@4.6.0)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.1.0(rollup@4.6.0)
       pathe: registry.npmmirror.com/pathe@1.1.1
     transitivePeerDependencies:
       - rollup
@@ -4851,7 +4851,7 @@ packages:
     engines: {node: '>=16.14.0'}
     dependencies:
       '@babel/parser': registry.npmmirror.com/@babel/parser@7.23.4
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.5(rollup@4.6.0)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.1.0(rollup@4.6.0)
       pathe: registry.npmmirror.com/pathe@1.1.1
     transitivePeerDependencies:
       - rollup
@@ -10753,7 +10753,7 @@ packages:
       '@rollup/plugin-replace': registry.npmmirror.com/@rollup/plugin-replace@5.0.5(rollup@4.6.0)
       '@rollup/plugin-terser': registry.npmmirror.com/@rollup/plugin-terser@0.4.4(rollup@4.6.0)
       '@rollup/plugin-wasm': registry.npmmirror.com/@rollup/plugin-wasm@6.2.2(rollup@4.6.0)
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.5(rollup@4.6.0)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.1.0(rollup@4.6.0)
       '@types/http-proxy': registry.npmmirror.com/@types/http-proxy@1.17.14
       '@vercel/nft': registry.npmmirror.com/@vercel/nft@0.24.3
       archiver: registry.npmmirror.com/archiver@6.0.1
@@ -11187,7 +11187,7 @@ packages:
         optional: true
     dependencies:
       '@nuxt/devalue': registry.npmmirror.com/@nuxt/devalue@2.0.2
-      '@nuxt/devtools': registry.npmmirror.com/@nuxt/devtools@1.0.5(nuxt@3.8.2)(vite@4.5.0)
+      '@nuxt/devtools': registry.npmmirror.com/@nuxt/devtools@1.0.6(nuxt@3.8.2)(vite@4.5.0)
       '@nuxt/kit': registry.npmmirror.com/@nuxt/kit@3.8.2
       '@nuxt/schema': registry.npmmirror.com/@nuxt/schema@3.8.2
       '@nuxt/telemetry': registry.npmmirror.com/@nuxt/telemetry@2.5.3
@@ -15635,12 +15635,12 @@ packages:
       '@nuxt/kit':
         optional: true
     dependencies:
-      '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.6
+      '@antfu/utils': registry.npmmirror.com/@antfu/utils@0.7.7
       '@nuxt/kit': registry.npmmirror.com/@nuxt/kit@3.8.2
-      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.0.5(rollup@4.6.0)
+      '@rollup/pluginutils': registry.npmmirror.com/@rollup/pluginutils@5.1.0(rollup@4.6.0)
       debug: registry.npmmirror.com/debug@4.3.4
       error-stack-parser-es: registry.npmmirror.com/error-stack-parser-es@0.1.1
-      fs-extra: registry.npmmirror.com/fs-extra@11.1.1
+      fs-extra: registry.npmmirror.com/fs-extra@11.2.0
       open: registry.npmmirror.com/open@9.1.0
       picocolors: registry.npmmirror.com/picocolors@1.0.0
       sirv: registry.npmmirror.com/sirv@2.0.3
@@ -16198,10 +16198,10 @@ packages:
         optional: true
     dev: false
 
-  registry.npmmirror.com/ws@8.14.2:
-    resolution: {integrity: sha512-wEBG1ftX4jcglPxgFCMJmZ2PLtSbJ2Peg6TmpJFTbe9GZYOQCDPdMYu/Tm0/bGZkw8paZnJY45J4K2PZrLYq8g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ws/-/ws-8.14.2.tgz}
+  registry.npmmirror.com/ws@8.15.1:
+    resolution: {integrity: sha512-W5OZiCjXEmk0yZ66ZN82beM5Sz7l7coYxpRkzS+p9PP+ToQry8szKh+61eNktr7EA9DOwvFGhfC605jDHbP6QQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ws/-/ws-8.15.1.tgz}
     name: ws
-    version: 8.14.2
+    version: 8.15.1
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="container mx-auto flex flex-col gap-2 p-4">
     <div class="flex justify-end">
       <NButton @click="() => (addDrawerShowRef = true)">{{ i18nRef.dataTableAddBtn }}</NButton>
     </div>
@@ -122,7 +122,7 @@ const {
   getStatusLoading: (loading) => {
     return loading || groupParentStatusRef.value === 'pending'
   },
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<VideoType>[] = [
       {
         title: i18nRef.dataTableVideoTypeParent,

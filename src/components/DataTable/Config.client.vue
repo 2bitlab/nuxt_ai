@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="container mx-auto flex flex-col gap-2 p-4">
     <div class="flex justify-end">
       <NButton @click="() => (addDrawerShowRef = true)">{{ i18nRef.dataTableAddBtn }}</NButton>
     </div>
@@ -70,6 +70,8 @@ const getI18nConfig = () => ({
   [`dataTableConfigValueKey_${ConfigValueKey.TENCENT_COS_UPLOAD}`]: '腾讯云cos上传配置',
   [`dataTableConfigValueKey_${ConfigValueKey.TENCENT_VECTOR_DB}`]: '腾讯云向量数据库配置',
   [`dataTableConfigValueKey_${ConfigValueKey.OPENAI_API_KEY}`]: 'OpenAi api key',
+  [`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}`]: '系统邮箱SMTP配置',
+  [`dataTableConfigValueKey_${ConfigValueKey.WORK_WECHAT_ROBOT_KEY}`]: '企业微信机器人key',
 
   // TENCENT_COS_SECRET value
   [`dataTableConfigValueKey_${ConfigValueKey.TENCENT_COS_SECRET}_secretId`]: 'secretId',
@@ -86,6 +88,16 @@ const getI18nConfig = () => ({
 
   // OPENAI_API_KEY value
   [`dataTableConfigValueKey_${ConfigValueKey.OPENAI_API_KEY}_apiKey`]: 'apiKey',
+
+  // EMAIL_SMTP value
+  [`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_host`]: 'Server host',
+  [`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_port`]: 'Server port',
+  [`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_user`]: 'Server user',
+  [`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_password`]: 'Server password',
+  [`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_from`]: 'From',
+
+  // WORK_WECHAT_ROBOT_KEY value
+  [`dataTableConfigValueKey_${ConfigValueKey.WORK_WECHAT_ROBOT_KEY}_apiKey`]: 'apiKey',
 })
 
 type I18nType = ReturnType<typeof getI18nConfig>
@@ -115,7 +127,7 @@ const {
 } = useDataTable<ConfigValue, I18nType>({
   model: 'configValue',
   getI18nConfig,
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<ConfigValue>[] = [
       {
         type: 'expand',
@@ -197,6 +209,7 @@ const keyOptionsRef = computed(() => {
     value: key,
   }))
 
+  console.log('keyOptionsRef options', options)
   const list = listRef.value
 
   const hasKeys = list.map(({ key }) => key)
@@ -221,6 +234,16 @@ const sampleDataRef = computed(() => {
     },
     OPENAI_API_KEY: {
       apiKey: i18nRef[`dataTableConfigValueKey_${ConfigValueKey.OPENAI_API_KEY}_apiKey`],
+    },
+    EMAIL_SMTP: {
+      host: i18nRef[`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_host`],
+      port: i18nRef[`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_port`],
+      user: i18nRef[`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_user`],
+      pass: i18nRef[`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_server_password`],
+      from: i18nRef[`dataTableConfigValueKey_${ConfigValueKey.EMAIL_SMTP}_from`],
+    },
+    WORK_WECHAT_ROBOT_KEY: {
+      apiKey: i18nRef[`dataTableConfigValueKey_${ConfigValueKey.WORK_WECHAT_ROBOT_KEY}_apiKey`],
     },
   }
 

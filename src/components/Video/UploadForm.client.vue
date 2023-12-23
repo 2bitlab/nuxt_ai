@@ -103,7 +103,7 @@
         <NUpload v-else key="uploadBtn" :custom-request="customRequest" directory-dnd :show-file-list="false">
           <NUploadDragger :class="uploadDraggerClassRef">
             <template v-if="noFileRef">
-              <div v-if="stepRef === 1">
+              <div v-if="stepRef === 1" class="flex h-96 flex-col justify-center">
                 <div>
                   <Icon name="ic:baseline-cloud-upload" size="32" />
                 </div>
@@ -143,24 +143,22 @@
             </template>
           </NUploadDragger>
         </NUpload>
-
-        {{ taskIdRef }}
       </div>
     </div>
 
-    <div v-if="stepRef === 1" class="flex gap-4">
-      <div class="rounded p-4" :style="bgRef">
+    <div v-if="stepRef === 1" class="mt-4 flex gap-4">
+      <NCard>
         <div>{{ i18nRef.creatorContentUploadDraggerVideoTypeTipsTitle }}</div>
         <div class="pt-2 text-xs">{{ i18nRef.creatorContentUploadDraggerVideoTypeTipsContent }}</div>
-      </div>
-      <div class="rounded p-4" :style="bgRef">
+      </NCard>
+      <NCard>
         <div>{{ i18nRef.creatorContentUploadDraggerVideoSizeTipsTitle }}</div>
         <div class="pt-2 text-xs">{{ i18nRef.creatorContentUploadDraggerVideoSizeTipsContent }}</div>
-      </div>
-      <div class="rounded p-4" :style="bgRef">
+      </NCard>
+      <NCard>
         <div>{{ i18nRef.creatorContentUploadDraggerVideoResolutionTipsTitle }}</div>
         <div class="pt-2 text-xs">{{ i18nRef.creatorContentUploadDraggerVideoResolutionTipsContent }}</div>
-      </div>
+      </NCard>
     </div>
   </div>
 </template>
@@ -176,6 +174,7 @@ import {
   NInput,
   NUploadDragger,
   NSelect,
+  NCard,
   NProgress,
 } from 'naive-ui'
 
@@ -194,7 +193,6 @@ const {
   noFileRef,
   videoTypeRef,
   formWarperClassRef,
-  bgRef,
   handleSearchVideoTags,
   videoSetsOptionsRef,
   videoTypeCascaderOptionsRef,
@@ -205,6 +203,5 @@ const {
   videoTagsOptionsLoadingRef,
   videoSetsOptionsLoadingRef,
   loadingRef,
-  taskIdRef,
 } = useVideoUploadForm()
 </script>
