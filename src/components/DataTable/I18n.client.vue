@@ -113,7 +113,7 @@ const {
   getStatusLoading: (loading) => {
     return loading || groupLangStatusRef.value === 'pending'
   },
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<I18nValue>[] = [
       {
         title: i18nRef.dataTableI18nValueLang,

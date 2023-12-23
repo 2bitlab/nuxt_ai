@@ -15,3 +15,7 @@ public
 docs
 
 assets
+
+
+
+src/server/trpc/routers/db/*.ts

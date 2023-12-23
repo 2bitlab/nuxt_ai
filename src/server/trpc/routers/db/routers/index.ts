@@ -39,12 +39,12 @@ import createVideoRouter from './Video.router'
 import createVideoTypeRouter from './VideoType.router'
 import createVideoTagRouter from './VideoTag.router'
 import createVideoSetRouter from './VideoSet.router'
-import createVideoTaskRouter from './VideoTask.router'
+import createVideoOrderRouter from './VideoOrder.router'
+import createBalanceRouter from './Balance.router'
+import createBalanceLogRouter from './BalanceLog.router'
 import createSiteRouter from './Site.router'
 import createPageRouter from './Page.router'
 import createCrawlTaskRouter from './CrawlTask.router'
-import createBalnaceRouter from './Balnace.router'
-import createBalanceLogRouter from './BalanceLog.router'
 import createRoleRouter from './Role.router'
 import createUserRoleRouter from './UserRole.router'
 import createRolePermissionRouter from './RolePermission.router'
@@ -134,12 +134,12 @@ export function createRouter<Router extends RouterFactory<BaseConfig>, Proc exte
     videoType: createVideoTypeRouter<Router, Proc>(router, procedure),
     videoTag: createVideoTagRouter<Router, Proc>(router, procedure),
     videoSet: createVideoSetRouter<Router, Proc>(router, procedure),
-    videoTask: createVideoTaskRouter<Router, Proc>(router, procedure),
+    videoOrder: createVideoOrderRouter<Router, Proc>(router, procedure),
+    balance: createBalanceRouter<Router, Proc>(router, procedure),
+    balanceLog: createBalanceLogRouter<Router, Proc>(router, procedure),
     site: createSiteRouter<Router, Proc>(router, procedure),
     page: createPageRouter<Router, Proc>(router, procedure),
     crawlTask: createCrawlTaskRouter<Router, Proc>(router, procedure),
-    balnace: createBalnaceRouter<Router, Proc>(router, procedure),
-    balanceLog: createBalanceLogRouter<Router, Proc>(router, procedure),
     role: createRoleRouter<Router, Proc>(router, procedure),
     userRole: createUserRoleRouter<Router, Proc>(router, procedure),
     rolePermission: createRolePermissionRouter<Router, Proc>(router, procedure),
