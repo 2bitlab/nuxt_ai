@@ -147,7 +147,7 @@ const {
   model: 'role',
   getI18nConfig,
 
-  getColumns: (update, i18nRef) => {
+  getColumns: ({ update, i18nRef }) => {
     const columns: DataTableColumn<Role>[] = [
       {
         title: i18nRef.dataTableRoleName,

@@ -1,0 +1,27 @@
+name: dev deploy
+
+on:
+  push:
+    paths:
+      - 'src/**'
+    branches:
+      - 'dev'
+  # 可以在workflow手动触发
+  workflow_dispatch:
+
+concurrency:
+  group: build/${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag parse
+        uses: threfo/tag-parse-action@master
+        with:
+          repository: ${{ secrets.ACTION_REPOSITORY }}
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          type: stringify
+          # runCommand: 'chmod +x /home/src/nuxt_ai/deploy/dev/deploy.sh && /home/src/nuxt_ai/deploy/dev/deploy.sh'
+          runCommand: 'chmod +x /home/src/nuxt_ai/deploy-tcloud/dev/deploy.sh && /home/src/nuxt_ai/deploy-tcloud/dev/deploy.sh'
+          # runCommand: 'chmod +x /home/src/nuxt_ai/deploy-tcloud/redis/deploy.sh && /home/src/nuxt_ai/deploy-tcloud/redis/deploy.sh'

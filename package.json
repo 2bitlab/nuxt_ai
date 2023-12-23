@@ -26,8 +26,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "-----db------": "-----------------------------------",
-    "db:dev": "pnpm db:up && pnpm db:migrate:dev",
-    "db:up": "docker compose -f docker-compose-dev.yml -p trpc_vue_vite_ssr_dev up -d",
+    "db:dev": "pnpm db:up && pnpm db:generate && pnpm db:migrate:deploy && pnpm db:update",
+    "db:up": "docker compose -f docker-compose-dev.yml -p nuxt_ai_db_dev up -d",
     "db:nuke": "docker compose down --volumes --remove-orphans",
     "db:reset": "pnpm db:nuke && pnpm db:dev",
     "db:migrate:deploy": "prisma migrate deploy",
@@ -41,8 +41,12 @@
     "db:generate": "zenstack generate --schema schema.zmodel",
     "zenstack:init": "npx zenstack init -p pnpm --prisma prisma/schema.prisma",
     "-----docker-------": "-----------------------------",
-    "docker-up": "docker-compose up --build --force-recreate -d",
-    "docker-build": "docker-compose build --force-rm --no-cache"
+    "compose:up": "docker-compose up --build --force-recreate -d",
+    "compose:build": "docker-compose build --force-rm --no-cache",
+    "docker:build": "docker build -t nuxt_ai .",
+    "docker:run": "docker run --env-file .env --name nuxt_ai -p 3000:3000 -d nuxt_ai",
+    "docker:build:nginx": "docker build -f nginx/Dockerfile -t nuxt_ai_nginx .",
+    "docker:run:nginx": "docker run --name nuxt_ai_nginx -p 8080:80 -d nuxt_ai_nginx"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
@@ -95,7 +99,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.18.4",
-    "@auth/prisma-adapter": "^1.0.9",
+    "@auth/prisma-adapter": "1.0.9",
     "@hebilicious/authjs-nuxt": "^0.3.5",
     "@prisma/client": "^5.6.0",
     "@t3-oss/env-nuxt": "^0.7.1",
@@ -122,5 +126,10 @@
     "uuid": "^9.0.1",
     "x-crawl": "^8.3.0",
     "zod": "^3.22.4"
+  },
+  "syncBranches": {
+    "master": "pro-tcloud",
+    "pro-tcloud": "uat-tcloud",
+    "uat-tcloud": "dev-tcloud"
   }
 }

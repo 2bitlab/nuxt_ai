@@ -3,11 +3,9 @@
     <NLayoutHeader>
       <Header />
     </NLayoutHeader>
-    <NLayout>
-      <NLayoutContent>
-        <slot />
-      </NLayoutContent>
-    </NLayout>
+    <NLayoutContent>
+      <slot />
+    </NLayoutContent>
   </NLayout>
 </template>
 

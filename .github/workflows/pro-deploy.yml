@@ -1,0 +1,25 @@
+name: pro deploy
+
+on:
+  push:
+    paths:
+      - 'src/**'
+    branches:
+      - 'pro'
+  # 可以在workflow手动触发
+  workflow_dispatch:
+
+concurrency:
+  group: build/${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag parse
+        uses: threfo/tag-parse-action@master
+        with:
+          repository: ${{ secrets.ACTION_REPOSITORY }}
+          githubToken: ${{ secrets.ACCESS_TOKEN }}
+          type: stringify
+          runCommand: 'chmod +x /home/src/nuxt_ai/deploy-tcloud/pro/deploy.sh && /home/src/nuxt_ai/deploy-tcloud/pro/deploy.sh'

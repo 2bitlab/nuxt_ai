@@ -202,7 +202,7 @@ const {
     return loading || groupRoleStatusRef.value === 'pending'
   },
 
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<CompanyMember>[] = [
       {
         title: i18nRef.dataTableCompanyMemberCompanyId,

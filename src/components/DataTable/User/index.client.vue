@@ -1,18 +1,14 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="container mx-auto flex flex-col gap-2 p-4">
     <div class="flex items-end justify-between gap-5">
-      <div>
-        <div>
-          <NInput v-model:value="inputValueRef">
-            <template #prefix>
-              <Icon name="ic:sharp-search" size="16" />
-            </template>
-          </NInput>
-        </div>
-        <div>
-          <div>{{ i18nRef.dataTableUserCreatedAt }}</div>
-          <NDatePicker v-model:value="rangeCreatedAtRef" type="daterange" clearable />
-        </div>
+      <div class="flex gap-2">
+        <NInput v-model:value="inputValueRef">
+          <template #prefix>
+            <Icon name="ic:sharp-search" size="16" />
+          </template>
+        </NInput>
+
+        <NDatePicker v-model:value="rangeCreatedAtRef" type="daterange" clearable />
       </div>
       <div>
         <NButton @click="() => (addDrawerShowRef = true)">{{ i18nRef.dataTableAddBtn }}</NButton>
@@ -101,6 +97,7 @@ const getI18nConfig = () => ({
   dataTableUserEmailHasBeenRegistered: '邮箱已被注册',
   dataTableUserNameHasBeenRegistered: '昵称已被注册',
   dataTableUserEmailFormatError: '请使用正确的邮箱格式',
+  dataTableUserPasswordLengthError: '密码长度不能小于6位',
 })
 
 type I18nType = ReturnType<typeof getI18nConfig>
@@ -149,7 +146,7 @@ const {
   model: 'user',
   getI18nConfig,
 
-  getColumns: (update) => {
+  getColumns: ({ update }) => {
     const columns: DataTableColumn<User>[] = [
       {
         type: 'expand',
@@ -212,17 +209,17 @@ const {
 
       {
         title: i18nRef.dataTableUserBalance,
-        key: 'balanceLogs',
+        key: 'balance',
         width: 100,
 
         render: (row) => {
-          const { balanceLogs } = row as any
+          const { balance } = row as any
 
-          const [first] = balanceLogs || []
+          const [first] = balance || []
 
-          const { balance } = first || {}
-          if (balance) {
-            return balance
+          const { availableBalance } = first || {}
+          if (availableBalance) {
+            return availableBalance
           }
           return '-'
         },
@@ -288,6 +285,10 @@ const {
             editValueEmpty: true,
             onUpdateValue: async (v) => {
               if (v) {
+                if (v.length < 6) {
+                  return Promise.reject(Error(i18nRef.dataTableUserPasswordLengthError))
+                }
+
                 const password = await getTrpc().password.hash.query({
                   email: row.email,
                   password: v as string,
@@ -346,6 +347,7 @@ const {
           required: true,
           message: evaluate(i18nRef.dataTableSaveRequiredTips, { text: i18nRef.dataTableUserPassword }),
           trigger: ['blur'],
+          min: 6,
         },
       ],
       name: [
@@ -427,11 +429,10 @@ const {
           orderBy: { startAt: 'desc' },
           take: 1,
         },
-        balanceLogs: {
+        balance: {
           select: {
-            balance: true,
+            availableBalance: true,
           },
-          orderBy: { createdAt: 'desc' },
           take: 1,
         },
       },
