@@ -43,7 +43,7 @@
     "-----docker-------": "-----------------------------",
     "compose:up": "docker-compose up --build --force-recreate -d",
     "compose:build": "docker-compose build --force-rm --no-cache",
-    "docker:build": "docker build -t nuxt_ai .",
+    "docker:build": "docker build -f deploy-tcloud/dev/Dockerfile -t nuxt_ai .",
     "docker:run": "docker run --env-file .env --name nuxt_ai -p 3000:3000 -d nuxt_ai",
     "docker:build:nginx": "docker build -f nginx/Dockerfile -t nuxt_ai_nginx .",
     "docker:run:nginx": "docker run --name nuxt_ai_nginx -p 8080:80 -d nuxt_ai_nginx"
